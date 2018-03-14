@@ -32,11 +32,11 @@ Class lodash From LongNameClass
     // Method difference()
     // Method differenceBy()
     // Method differenceWith()
-    // Method drop()
-    // Method dropRight()
+    Method drop()
+    Method dropRight()
     // Method dropRightWhile()
     // Method dropWhile()
-    // Method fill()
+    Method fill()
     // Method findIndex()
     // Method findLastIndex()
     Method first()
@@ -147,3 +147,68 @@ Method first(array) Class lodash
 
 Method head(array) Class lodash
     Return If (ValType(array) == "A" .And. Len( array ) > 0) ? array[1] : Nil
+
+Method drop(array, n, guard) Class lodash
+    Local length := If array == Nil ? 0 : Len(array)
+
+    If length == 0
+        return {}
+    EndIf
+
+    n := If (guard != Nil .Or. n == Nil) ? 1 : toInteger(n)
+
+    return baseSlice(array, If n < 0 ? 0 : n, length)
+
+Method dropRight(array, n, guard) Class lodash
+    Local length := If array == Nil ? 0 : Len(array)
+
+    If length == 0
+        return {}
+    EndIf
+
+    n := If (guard != Nil .Or. n == Nil) ? 1 : toInteger(n)
+    n := length - n
+
+    Return baseSlice(array, 0, If n < 0 ? 0 : n)
+
+Static Function toInteger(n)
+    //TODO implementar
+    Return If n == Nil ?  0 : n
+
+static function baseSlice(array, start, finish)
+    Local index  := 0
+    Local length := Len(array)
+    Local result := {}
+
+    If start < 0
+        start := If -start > length ? 1 : (length + start)
+    EndIf
+
+    finish := If finish > length ? length : finish
+
+    If finish < 0
+        finish += length
+    EndIf
+
+    length := If start > finish ? 0 : (finish - start)
+
+    result := Array(length)
+
+    while index ++ < length
+        result[index] := array[index + start]
+    End
+
+    return result
+
+Method fill(array, value, start, finish) Class lodash
+    Local length := If array == Nil ? 0 : Len(array)
+
+    If Empty(length)
+        return {}
+    EndIf
+
+    If finish != Nil
+        finish := finish - start // AFill recebe count e não finish
+    EndIf
+
+return AFill(array, value, start, finish)
