@@ -11,7 +11,7 @@ User Function _(id)
 
     While ProcName( ++ nActivation ) != ""
         cProcname := ProcName( nActivation )
-    End
+    EndDo
 
     If Type(id) == "U"
         oLodash := lodash():New()
@@ -39,10 +39,11 @@ Class lodash From LongNameClass
     // Method fill()
     // Method findIndex()
     // Method findLastIndex()
-    // Method first()
+    Method first()
     Method flatten()
     Method flattenDeep()
     Method flattenDepth()
+    Method head()
 
 
 EndClass
@@ -64,9 +65,9 @@ Method chunk( array, size ) Class lodash
         If index % size == 0 .And. length > index
              AAdd( result, {} )
         EndIf
-    End
+    EndDo
 
-Return result
+    Return result
 
 Method compact( array ) Class lodash
     Local result := {}
@@ -83,19 +84,17 @@ Method compact( array ) Class lodash
 
         AAdd( result, array[ index ] )
 
-    End
+    EndDo
 
-Return result
+    Return result
 
 Method concatenate( array, params ) Class lodash
     Local result  := AClone( array )
     Local flatten := ::flatten( params )
 
-    Parameter params as variadic
-
     arrayPush(result, flatten)
 
-Return result
+    Return result
 
 Static Function arrayPush(array, values)
     Local index  := 0
@@ -103,21 +102,21 @@ Static Function arrayPush(array, values)
 
     While index ++ < length
         AAdd( array, values[ index ] )
-    End
+    EndDo
 
-Return
+    Return
 
 Method flattenDepth( array, depth ) Class lodash
 
-Return baseFlatten(array, depth )
+    Return baseFlatten(array, depth )
 
 Method flatten( array ) Class lodash
 
-Return baseFlatten(array, 1)
+    Return baseFlatten(array, 1)
 
 Method flattenDeep( array ) Class lodash
 
-Return baseFlatten(array, 9999)
+    Return baseFlatten(array, 9999)
 
 Static Function baseFlatten( array, depth, result)
     Local index  := 0
@@ -139,6 +138,12 @@ Static Function baseFlatten( array, depth, result)
         else
             AAdd( result, value )
         EndIf
-    End
+    EndDo
 
-return result
+    return result
+
+Method first(array) Class lodash
+    Return ::head(array)
+
+Method head(array) Class lodash
+    Return If (ValType(array) == "A" .And. Len( array ) > 0) ? array[1] : Nil

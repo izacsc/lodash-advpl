@@ -9,16 +9,17 @@ The goal is to implement most functionalities described in their [docs](https://
 
 # Using
 
-```
-    #include 'lodash.ch'
-
-    import lodash as "_"
-
-    User Function TestLodash()
-
-    aRet := _:chunk({'a', 'b', 'c', 'd'}, 2)
-    //aRet := {{'a', 'b'}, {'c', 'd'}}
+```xBase
     
+#include 'lodash.ch'
+
+import lodash as "_"
+
+User Function TestLodash()
+    Local aRet := { }
+    aRet := _:chunk( { 'a', 'b', 'c', 'd' }, 2)
+    //aRet := { { 'a', 'b' }, { 'c', 'd' } }
+
     Return
 
 ```
@@ -31,3 +32,4 @@ The goal is to implement most functionalities described in their [docs](https://
 - Flatten     
 - FlattenDeep 
 - FlattenDepth
+- Head (First)

@@ -11,6 +11,7 @@ TestSuite _test Description 'Lodash AdvPL implementation' Verbose
     Feature Flatten      Description 'Flattens array a single level deep.'
     Feature FlattenDeep  Description 'Recursively flattens array.'
     Feature FlattenDepth Description 'Recursively flatten array up to depth times.'
+    Feature Head         Description 'Gets the first element of array.'
 EndTestSuite
 
 Feature Chunk TestSuite _test
@@ -48,6 +49,13 @@ Feature FlattenDepth TestSuite _test
 
     ::Expect( _:flattenDepth( {1, {2, {3, {4}}, 5}}, 1 ) ):ToBe( {1, 2, {3, {4}}, 5} )
     ::Expect( _:flattenDepth( {1, {2, {3, {4}}, 5}}, 2 ) ):ToBe( {1, 2, 3, {4}, 5} )
+    
+Return
+
+Feature Head TestSuite _test
+
+    ::Expect( _:head( { 1, 2, 3 }) ):ToBe( 1 )
+    ::Expect( _:head( { } ) ):ToBe( Nil )
     
 Return
 
