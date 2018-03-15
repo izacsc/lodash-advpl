@@ -33,4 +33,4 @@ User Function TestLodash()
 ```
 
 # Features
-Check our [wiki][https://github.com/izacsc/lodash-advpl/wiki] for more details 
+Check our [wiki](https://github.com/izacsc/lodash-advpl/wiki/Docs) for more details 
