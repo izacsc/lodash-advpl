@@ -33,11 +33,4 @@ User Function TestLodash()
 ```
 
 # Features
-
-- Chunk       
-- Compact     
-- Concat      
-- Flatten     
-- FlattenDeep 
-- FlattenDepth
-- Head (First)
+Check our [wiki][https://github.com/izacsc/lodash-advpl/wiki] for more details 
