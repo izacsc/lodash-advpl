@@ -3,7 +3,7 @@
 ## “Array” Methods
 ### _:chunk(array, [size=1])
 
-Creates an array of elements split into groups the length of size. If array can't be split evenly, the final chunk will be the remaining elements.
+Creates an array of elements split into groups the length of size. If array can"t be split evenly, the final chunk will be the remaining elements.
 
 #### Arguments
 array (Array): The array to process.  
@@ -14,11 +14,11 @@ array (Array): The array to process.
 
 #### Example
 ```xBase
-_:chunk({'a', 'b', 'c', 'd'}, 2)
-// => {{'a', 'b'}, {'c', 'd'}}
+_:chunk({ "a", "b", "c", "d" }, 2)
+// => { { "a", "b" }, { "c", "d" } }
  
-_:chunk({'a', 'b', 'c', 'd'}, 3)
-// => {{'a', 'b', 'c'}, {'d'}}
+_:chunk({ "a", "b", "c", "d" }, 3)
+// => { { "a", "b", "c" }, { "d" } }
 ```
 
 ### _:compact(array)
@@ -33,8 +33,8 @@ array (Array): The array to compact.
 
 #### Example
 ```xBase
-_:compact({ 0, 1, .F., 2, "", 3, Nil })
-// => {1, 2, 3}
+_:compact({  0, 1, .F., 2, "", 3, Nil  })
+// => { 1, 2, 3 }
 ```
 
 ### _:concat(array, [values])
@@ -50,14 +50,14 @@ array (Array): The array to concatenate.
 
 #### Example
 ```xBase
-array := {1}
-other := _:concat(array, 2, {3}, {{4}})
+array := { 1 }
+other := _:concat(array, 2, { 3 }, { { 4 } })
 
 // other
-// => {1, 2, 3, {4}}
+// => { 1, 2, 3, { 4 } }
  
 //array
-// => {1}
+// => { 1 }
 ```
 
 ### _:drop(array, [n=1])
@@ -73,17 +73,17 @@ array (Array): The array to query.
 
 #### Example
 ```xBase
-_:drop({1, 2, 3})
-// => {2, 3}
+_:drop({ 1, 2, 3 })
+// => { 2, 3 }
  
-_:drop({1, 2, 3}, 2)
-// => {3}
+_:drop({ 1, 2, 3 }, 2)
+// => { 3 }
  
-_:drop({1, 2, 3}, 5)
-// => {}
+_:drop({ 1, 2, 3 }, 5)
+// => {  }
  
-_:drop({1, 2, 3}, 0)
-// => {1, 2, 3}
+_:drop({ 1, 2, 3 }, 0)
+// => { 1, 2, 3 }
 ```
 
 ### _:dropRight(array, [n=1])
@@ -99,17 +99,17 @@ array (Array): The array to query.
 
 #### Example
 ```xBase
-_:dropRight({1, 2, 3})
-// => {1, 2}
+_:dropRight({ 1, 2, 3 })
+// => { 1, 2 }
  
-_:dropRight({1, 2, 3}, 2)
-// => {1}
+_:dropRight({ 1, 2, 3 }, 2)
+// => { 1 }
  
-_:dropRight({1, 2, 3}, 5)
-// => {}
+_:dropRight({ 1, 2, 3 }, 5)
+// => {  }
  
-_:dropRight({1, 2, 3}, 0)
-// => {1, 2, 3}
+_:dropRight({ 1, 2, 3 }, 0)
+// => { 1, 2, 3 }
 ```
 
 ### _:fill(array, value, [start=0], [end=array.length])
@@ -129,17 +129,17 @@ value (*): The value to fill array with.
 
 #### Example
 ```xBase
-array := {1, 2, 3}
+array := { 1, 2, 3 }
  
-_:fill(array, 'a')
+_:fill(array, "a")
 //array
-// => {'a', 'a', 'a'}
+// => { "a", "a", "a" }
  
 _:fill(Array(3), 2)
-// => {2, 2, 2}
+// => { 2, 2, 2 }
  
-_:fill({4, 6, 8, 10}, '*', 2, 4)
-// => {4, '*', '*', 10}
+_:fill({ 4, 6, 8, 10 }, "*", 2, 4)
+// => { 4, "*", "*", 10 }
 ```
 
 
@@ -155,8 +155,8 @@ array (Array): The array to flatten.
 
 #### Example
 ```xBase
-_:flatten({1, {2, {3, {4}}, 5}})
-// => {1, 2, {3, {4}}, 5}
+_:flatten({ 1, { 2, { 3, { 4 } }, 5 } })
+// => { 1, 2, { 3, { 4 } }, 5 }
 ```
 
 ### _:flattenDeep(array)
@@ -171,8 +171,8 @@ array (Array): The array to flatten.
 
 #### Example
 ```xBase
-_:flattenDeep({1, {2, {3, {4}}, 5}})
-// => {1, 2, 3, 4, 5}
+_:flattenDeep({ 1, { 2, { 3, { 4 } }, 5 } })
+// => { 1, 2, 3, 4, 5 }
 ```
 
 ### _:flattenDepth(array, [depth=1])
@@ -188,13 +188,13 @@ array (Array): The array to flatten.
 
 #### Example
 ```xBase
-array := {1, {2, {3, {4}}, 5}}
+array := { 1, { 2, { 3, { 4 } }, 5 } }
  
 _:flattenDepth(array, 1)
-// => {1, 2, {3, {4}}, 5}
+// => { 1, 2, { 3, { 4 } }, 5 }
  
 _:flattenDepth(array, 2)
-// => {1, 2, 3, {4}, 5}
+// => { 1, 2, 3, { 4 }, 5 }
 ```
 
 ### _:head(array)
@@ -212,9 +212,9 @@ array (Array): The array to query.
 
 #### Example
 ```xBase
-_:head({1, 2, 3})
+_:head({ 1, 2, 3 })
 // => 1
  
-_:head({})
+_:head({  })
 // => Nil
 ```
