@@ -187,6 +187,10 @@ Static Function toInteger(n)
     //TODO implementar
     Return If n == Nil ?  0 : n
 
+Static Function toLength(n)
+    //TODO implementar
+    Return If n == Nil ?  0 : n
+
 static function baseSlice(array, start, finish)
     Local index  := 0
     Local length := Len(array)
@@ -219,11 +223,41 @@ Method fill(array, value, start, finish) Class lodash
         return {}
     EndIf
 
-    If finish != Nil
-        finish := finish - start // AFill recebe count e n�o finish
+    If start != Nil .And. ValType( start ) != 'N' .And. isIterateeCall(array, value, start)
+        start := 0
+        finish := length
     EndIf
 
-return AFill(array, value, start, finish)
+    Return baseFill(array, value, start, finish)
+    
+
+function baseFill(array, value, start, finish)
+    Local length := Len(array)
+
+    start := toInteger(start)
+
+    If start > 0
+        start --
+    EndIf
+
+    if start < 0
+        start := If -start > length ? 0 : (length + start)
+    EndIf
+
+    finish := If (finish == Nil .Or. finish > length) ? length : toInteger(finish) - 1
+    
+    if finish < 0
+        finish += length
+    endif
+    
+    finish := If start > finish ? 0 : toLength(finish)
+    
+    while start++ < finish
+        array[start] := value
+        
+    EndDo
+
+    Return array
 
 Static Function isIterateeCall()
 
