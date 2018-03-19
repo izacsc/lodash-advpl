@@ -3,29 +3,33 @@
 #include "lodash.ch"
 
 User Function _(id)
-    Local nActivation := -1
+    Local nActivation := 0
 
     If id == Nil
         id := "_"
     EndIf
 
-    While ProcName( ++ nActivation ) != ""
-        cProcname := ProcName( nActivation )
-    EndDo
-
     If Type(id) == "U"
+        
+        While ProcName( ++ nActivation ) != ""
+            cProcname := ProcName( nActivation )
+        EndDo
+        
         oLodash := lodash():New()
 
         _SetNamedPrvt( id, oLodash, cProcname )
+    ElseIf !( Type(id) == "O" .And. &(id):ClassName() == "lodash")
+        UserException("It was not possible to instantiate lodash. Id '" + id +  "' already in use.")
     EndIf
 
-Return oLodash:VERSION
+Return &(id):Version()
 
 Class lodash From LongNameClass
 
-    DATA VERSION as char
-
     Method New() //Constructor
+    Method Version()
+    Method ClassName()
+
     Method chunk()
     Method compact()
     Method concatenate()
@@ -45,14 +49,19 @@ Class lodash From LongNameClass
     Method flattenDepth()
     Method head()
 
-
 EndClass
 
 Method New() Class lodash
 
-    self:VERSION := "0.1"
-
 Return self
+
+Method ClassName() Class lodash
+
+Return "lodash"
+
+Method VERSION() Class lodash
+
+Return "0.1"
 
 Method chunk( array, size ) Class lodash
     Local result := {{}} ,;
@@ -208,7 +217,7 @@ Method fill(array, value, start, finish) Class lodash
     EndIf
 
     If finish != Nil
-        finish := finish - start // AFill recebe count e não finish
+        finish := finish - start // AFill recebe count e nï¿½o finish
     EndIf
 
 return AFill(array, value, start, finish)
