@@ -35,4 +35,4 @@ User Function TestLodash()
 # Features
 Check our [wiki](https://github.com/izacsc/lodash-advpl/wiki/Docs) for more details.
 
-Check our [TODO](https://github.com/izacsc/lodash-advpl/todo.md) for details about the current status of implementation.
+Check our [TODO](https://github.com/izacsc/lodash-advpl/blob/master/todo.md) for details about the current status of implementation.
