@@ -224,7 +224,7 @@ Method fill(array, value, start, finish) Class lodash
     EndIf
 
     If start != Nil .And. ValType( start ) != 'N' .And. isIterateeCall(array, value, start)
-        start := 0
+        start := 1
         finish := length
     EndIf
 
@@ -236,25 +236,24 @@ function baseFill(array, value, start, finish)
 
     start := toInteger(start)
 
-    If start > 0
-        start --
+    If start == 0
+        start := 1
     EndIf
 
     if start < 0
         start := If -start > length ? 0 : (length + start)
     EndIf
 
-    finish := If (finish == Nil .Or. finish > length) ? length : toInteger(finish) - 1
+    finish := If (finish == Nil .Or. finish > length) ? length + 1 : toInteger(finish)
     
     if finish < 0
-        finish += length
+        finish += length + 1
     endif
     
     finish := If start > finish ? 0 : toLength(finish)
     
-    while start++ < finish
-        array[start] := value
-        
+    while start < finish
+        array[start++] := value
     EndDo
 
     Return array
