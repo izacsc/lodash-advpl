@@ -33,16 +33,9 @@ Class lodash From LongNameClass
     Method chunk()
     Method compact()
     Method concatenate()
-    // Method difference()
-    // Method differenceBy()
-    // Method differenceWith()
     Method drop()
     Method dropRight()
-    // Method dropRightWhile()
-    // Method dropWhile()
     Method fill()
-    // Method findIndex()
-    // Method findLastIndex()
     Method first()
     Method flatten()
     Method flattenDeep()
@@ -53,34 +46,44 @@ EndClass
 
 Method New() Class lodash
 
-Return self
+    Return self
 
 Method ClassName() Class lodash
 
-Return "lodash"
+    Return "lodash"
 
-Method VERSION() Class lodash
+Method Version() Class lodash
 
-Return "0.1"
+    Return "0.1"
 
-Method chunk( array, size ) Class lodash
-    Local result := {{}} ,;
-          length := Len( array ),;
-          index  := 0
+Method chunk( array, size, guard ) Class lodash
+    Local length   := If array == Nil ? 0 : Len(array)
+    Local index    := 0
+    Local resIndex := 1
+    Local result   := {}
 
-    While index++ < length
-        AAdd( ATail( result ), array[ index ] )
+    If ( If guard != Nil ? isIterateeCall(array, size, guard) : size == Nil)
+        size := 1
+    Else
+        size := Max(toInteger(size), 0)
+    EndIf
 
-        If index % size == 0 .And. length > index
-             AAdd( result, {} )
-        EndIf
+    If length == Nil .Or. size < 1
+        Return {}
+    EndIf
+
+    result := Array(Ceiling((length / size)))
+
+    While index < length
+        result[resIndex++] := baseSlice(array, index, (index + size) )
+        index += size
     EndDo
 
     Return result
 
 Method compact( array ) Class lodash
     Local result := {}
-    Local length := Len( array )
+    Local length := If array == Nil ? 0 : Len( array )
     Local index  := 0
     Local value
 
@@ -141,10 +144,10 @@ Static Function baseFlatten( array, depth, result)
         If (depth > 0 .And. ValType(value) == "A")
             If (depth > 1)
                 baseFlatten(value, depth - 1, result)
-            else
+            Else
                 arrayPush(result, value)
             EndIf
-        else
+        Else
             AAdd( result, value )
         EndIf
     EndDo
@@ -221,3 +224,7 @@ Method fill(array, value, start, finish) Class lodash
     EndIf
 
 return AFill(array, value, start, finish)
+
+Static Function isIterateeCall()
+
+Return .F.
