@@ -414,7 +414,7 @@ Method indexOf( array, value, fromIndex ) Class lodash
     index := If fromIndex == Nil ? 1 : toInteger( fromIndex )
 
     If index < 0
-        index := nativeMax( length + index, 1)
+        index := Max( length + index, 1)
     EndIf
 
     return baseIndexOf( array, value, index )
