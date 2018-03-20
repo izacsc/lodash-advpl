@@ -10,11 +10,11 @@ User Function _(id)
     EndIf
 
     If Type(id) == "U"
-        
+
         While ProcName( ++ nActivation ) != ""
             cProcname := ProcName( nActivation )
         EndDo
-        
+
         oLodash := lodash():New()
 
         _SetNamedPrvt( id, oLodash, cProcname )
@@ -35,7 +35,11 @@ Class lodash From LongNameClass
     Method concatenate()
     Method drop()
     Method dropRight()
+    Method dropRightWhile()
+    Method dropWhile()
     Method fill()
+    Method findIndex()
+    Method findLastIndex()
     Method first()
     Method flatten()
     Method flattenDeep()
@@ -152,7 +156,7 @@ Static Function baseFlatten( array, depth, result)
         EndIf
     EndDo
 
-    return result
+    Return result
 
 Method first(array) Class lodash
     Return ::head(array)
@@ -164,18 +168,18 @@ Method drop(array, n, guard) Class lodash
     Local length := If array == Nil ? 0 : Len(array)
 
     If length == 0
-        return {}
+        Return {}
     EndIf
 
     n := If (guard != Nil .Or. n == Nil) ? 1 : toInteger(n)
 
-    return baseSlice(array, If n < 0 ? 0 : n, length)
+    Return baseSlice(array, If n < 0 ? 0 : n, length)
 
 Method dropRight(array, n, guard) Class lodash
     Local length := If array == Nil ? 0 : Len(array)
 
     If length == 0
-        return {}
+        Return {}
     EndIf
 
     n := If (guard != Nil .Or. n == Nil) ? 1 : toInteger(n)
@@ -189,7 +193,7 @@ Static Function toInteger(n)
 
 Static Function toLength(n)
     //TODO implementar
-    Return If n == Nil ?  0 : n
+    Return If n == Nil ?  1 : n
 
 static function baseSlice(array, start, finish)
     Local index  := 0
@@ -197,7 +201,7 @@ static function baseSlice(array, start, finish)
     Local result := {}
 
     If start < 0
-        start := If -start > length ? 1 : (length + start)
+        start := If -start > length ? 0 : (length + start)
     EndIf
 
     finish := If finish > length ? length : finish
@@ -214,13 +218,13 @@ static function baseSlice(array, start, finish)
         result[index] := array[index + start]
     End
 
-    return result
+    Return result
 
 Method fill(array, value, start, finish) Class lodash
     Local length := If array == Nil ? 0 : Len(array)
 
     If Empty(length)
-        return {}
+        Return {}
     EndIf
 
     If start != Nil .And. ValType( start ) != 'N' .And. isIterateeCall(array, value, start)
@@ -229,29 +233,29 @@ Method fill(array, value, start, finish) Class lodash
     EndIf
 
     Return baseFill(array, value, start, finish)
-    
+
 
 function baseFill(array, value, start, finish)
     Local length := Len(array)
 
-    start := toInteger(start)
-
-    If start == 0
+    If start == Nil
         start := 1
     EndIf
 
-    if start < 0
+    start := toInteger(start)
+
+    If start < 0
         start := If -start > length ? 0 : (length + start)
     EndIf
 
     finish := If (finish == Nil .Or. finish > length) ? length + 1 : toInteger(finish)
-    
-    if finish < 0
+
+    If finish < 0
         finish += length + 1
-    endif
-    
+    endIf
+
     finish := If start > finish ? 0 : toLength(finish)
-    
+
     while start < finish
         array[start++] := value
     EndDo
@@ -261,3 +265,122 @@ function baseFill(array, value, start, finish)
 Static Function isIterateeCall()
 
 Return .F.
+
+Method dropWhile(array, predicate) Class lodash
+    Return If array != Nil .And. Len(array) > 0 ;
+        ? baseWhile(array, getIteratee(predicate, 3), .T.);
+        : {}
+
+Method dropRightWhile(array, predicate) Class lodash
+    Return If array != Nil .And. Len(array) > 0 ;
+        ? baseWhile(array, getIteratee(predicate, 3), .T., .T.);
+        : {}
+
+Static Function baseWhile(array, predicate, isDrop, fromRight)
+    Local length  := Len(array)
+    Local index   := If fromRight ? length : 0
+    Local start   := 0
+    Local finish  := 0
+
+    If fromRight
+        while index > 0 .And. Eval predicate(array[index], index, array)
+            index --
+        EndDo
+    Else
+        while index ++ < length .And. Eval predicate(array[index], index, array)
+        EndDo
+    EndIf
+
+    If isDrop
+        Return baseSlice(array, If fromRight ? 0 : index - 1, If fromRight ? index : length)
+    Else
+        Return baseSlice(array, If fromRight ? index + 1  : 0, If fromRight ? length : index - 1)
+    EndIf
+
+static function getIteratee(arg1, arg2 )
+    Local result := Function(x, y)->iteratee(x, y)
+
+    Return If arg1 != Nil ? Eval result(arg1, arg2) : result
+
+
+#DEFINE CLONE_DEEP_FLAG 1
+
+ static function iteratee( fun )
+      Return baseIteratee( fun )
+    //   Return baseIteratee( If ValType(func) == 'B' ? func : baseClone(func, CLONE_DEEP_FLAG))
+
+Static Function baseClone(par1, flag)
+
+    Return par1
+
+function baseIteratee(value)
+
+    If ValType(value) == 'B'
+        Return value
+    EndIf
+
+    If (value == Nil)
+        Return Function(value)->identity(value)
+    EndIf
+
+    // If ValType(value) == 'O')
+    // Return If isArray(value);
+    //     ? baseMatchesProperty(value[0], value[1]);
+    //     : baseMatches(value)
+    //
+    // EndIf
+
+    // Return property(value)
+
+Static Function identity(value)
+    Return value
+
+method findIndex(array, predicate, fromIndex) Class lodash
+    Local length := If array == Nil ? 0 : Len(array)
+    Local index  := 0
+
+    If length < 1
+        Return -1
+    EndIf
+
+    index := If fromIndex == Nil ? 1 : toInteger(fromIndex)
+
+    If index < 0
+        index := Max(length + index, 0)
+    Else
+        index := Min(index, length)
+    EndIf
+
+    Return baseFindIndex(array, getIteratee(predicate, 3), index)
+
+method findLastIndex(array, predicate, fromIndex) Class lodash
+        Local length := If array == Nil ? 0 : Len(array)
+        Local index  := 0
+
+        If length < 1
+            Return -1
+        EndIf
+
+        index := length
+
+        If fromIndex != Nil
+            index := toInteger(fromIndex)
+            index := If fromIndex < 0 ;
+                        ? Max(length + index, 0);
+                        : Min(index, length)
+        EndIf
+
+        Return baseFindIndex(array, getIteratee(predicate, 3), index, .T.)
+
+Static function baseFindIndex(array, predicate, fromIndex, fromRight)
+
+    Local length := Len(array) + 1
+    Local index := If fromRight ? fromIndex + 1 : fromIndex - 1
+
+    while If fromRight ? index -- > 1 : ++ index < length
+        If Eval predicate(array[index], index, array)
+            Return index
+        EndIf
+    EndDo
+
+    Return -1

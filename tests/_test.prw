@@ -5,16 +5,20 @@
 import lodash
 
 TestSuite _test Description 'Lodash AdvPL implementation' Verbose
-    Feature Chunk        Description 'Creates an array of elements split into groups the length of size.'// If array cant be split evenly, the final chunk will be the remaining elements.'
-    Feature Compact      Description 'Creates an array with all falsey values removed ( .F., Nil, 0, "")'
-    Feature Concat       Description 'Creates a new array concatenating array with arrays and/or values.'
-    Feature Drop         Description 'Creates a slice of array with n elements dropped from the beginning.'
-    Feature DropRight    Description 'Creates a slice of array with n elements dropped from the end.'
-    Feature Fill         Description 'Fills elements of array with value from start up to, but not including, end.'
-    Feature Flatten      Description 'Flattens array a single level deep.'
-    Feature FlattenDeep  Description 'Recursively flattens array.'
-    Feature FlattenDepth Description 'Recursively flatten array up to depth times.'
-    Feature Head         Description 'Gets the first element of array.'
+    Feature Chunk          Description 'Creates an array of elements split into groups the length of size.'// If array cant be split evenly, the final chunk will be the remaining elements.'
+    Feature Compact        Description 'Creates an array with all falsey values removed ( .F., Nil, 0, "")'
+    Feature Concat         Description 'Creates a new array concatenating array with arrays and/or values.'
+    Feature Drop           Description 'Creates a slice of array with n elements dropped from the beginning.'
+    Feature DropRight      Description 'Creates a slice of array with n elements dropped from the end.'
+    Feature DropRightWhile Description 'Creates a slice of array excluding elements dropped from the end. Elements are dropped until predicate returns falsey. The predicate is invoked with three arguments: (value, index, array).'
+    Feature DropWhile      Description 'Creates a slice of array excluding elements dropped from the beginning. Elements are dropped until predicate returns falsey. The predicate is invoked with three arguments: (value, index, array).'
+    Feature Fill           Description 'Fills elements of array with value from start up to, but not including, end.'
+    Feature FindIndex      Description 'This method is like _.find except that it returns the index of the first element predicate returns truthy for instead of the element itself.'         
+    Feature FindLastIndex  Description 'This method is like _.findIndex except that it iterates over elements of collection from right to left.'         
+    Feature Flatten        Description 'Flattens array a single level deep.'
+    Feature FlattenDeep    Description 'Recursively flattens array.'
+    Feature FlattenDepth   Description 'Recursively flatten array up to depth times.'
+    Feature Head           Description 'Gets the first element of array.'
 EndTestSuite
 
 Feature Chunk TestSuite _test
@@ -55,11 +59,46 @@ Feature DropRight TestSuite _test
 
 Return
 
+Feature DropRightWhile TestSuite _test
+
+    ::Expect( _:dropRightWhile( { 1, 2, 3 }, {|| .F. } ) ):ToBe( { 1, 2, 3 }  )
+    ::Expect( _:dropRightWhile( { 1, 2, 3 }, {|| .T. } ) ):ToBe( { }  )
+    ::Expect( _:dropRightWhile( { 1, 2, 3 }, {|value| value > 1 } ) ):ToBe( { 1 }  )
+
+Return
+
+Feature DropWhile TestSuite _test
+
+    ::Expect( _:dropWhile( { 1, 2, 3 }, {|| .F. } ) ):ToBe( { 1, 2, 3 }  )
+    ::Expect( _:dropWhile( { 1, 2, 3 }, {|| .T. } ) ):ToBe( { }  )
+    ::Expect( _:dropWhile( { 1, 2, 3 }, {|value| value < 3 } ) ):ToBe( { 3 }  )
+
+Return
+
 Feature Fill TestSuite _test
  
     ::Expect(_:fill( { 1, 2, 3 }, 'a')):ToBe( {'a', 'a', 'a'} )
     ::Expect(_:fill( Array( 3 ), 2 )):ToBe( {2, 2, 2} )
     ::Expect(_:fill( { 4, 6, 8, 10 }, '*', 2, 4)):ToBe( {4, '*', '*', 10} )
+ 
+Return 
+
+
+Feature FindIndex TestSuite _test
+ 
+    ::Expect(_:findIndex( { 1, 2, 3 }, {|| .F. } )):ToBe( -1 )
+    ::Expect(_:findIndex( { 1, 2, 3 }, {|value| value == 2 } )):ToBe( 2 )
+    ::Expect(_:findIndex( { 1, 2, 3 }, {|value, index| index == 3 } )):ToBe( 3 )
+    ::Expect(_:findIndex( { 1, 2, 3 }, {|value, index| index == 1 }, 2 )):ToBe( -1 )
+ 
+Return 
+
+Feature FindLastIndex TestSuite _test
+ 
+    ::Expect(_:findLastIndex( { 1, 2, 3 }, {|| .F. } )):ToBe( -1 )
+    ::Expect(_:findLastIndex( { 1, 2, 3 }, {|value| value == 2 } )):ToBe( 2 )
+    ::Expect(_:findLastIndex( { 1, 2, 3 }, {|value, index| index == 3 } )):ToBe( 3 )
+    ::Expect(_:findLastIndex( { 1, 2, 3 }, {|value, index| index == 3 }, 2 )):ToBe( -1 )
  
 Return 
 
