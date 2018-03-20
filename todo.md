@@ -21,8 +21,8 @@
 - [x] _.flattenDepth  
 - [x] _.fromPairs  
 - [x] _.head  
-- [ ] _.indexOf  
-- [ ] _.initial  
+- [x] _.indexOf  
+- [x] _.initial  
 - [ ] _.intersection  
 - [ ] _.intersectionBy  
 - [ ] _.intersectionWith  
