@@ -44,6 +44,7 @@ Class lodash From LongNameClass
     Method flatten()
     Method flattenDeep()
     Method flattenDepth()
+    Method fromPairs()
     Method head()
 
 EndClass
@@ -384,3 +385,16 @@ Static function baseFindIndex(array, predicate, fromIndex, fromRight)
     EndDo
 
     Return -1
+
+Method fromPairs( pairs ) Class lodash
+    Local index := 0,;
+        length := If pairs == Nil ? 0 : Len(pairs),;
+        result := JsonObject():New(),;
+        pair
+
+    while index++ < length
+        pair := pairs[index]
+        result[pair[1]] := pair[2]
+    EndDo
+
+    return result

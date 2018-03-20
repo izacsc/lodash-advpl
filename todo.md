@@ -9,16 +9,16 @@
 - [ ] _.differenceWith  
 - [x] _.drop  
 - [x] _.dropRight  
-- [ ] _.dropRightWhile  
-- [ ] _.dropWhile  
+- [x] _.dropRightWhile  
+- [x] _.dropWhile  
 - [x] _.fill  
-- [ ] _.findIndex  
-- [ ] _.findLastIndex  
+- [x] _.findIndex  
+- [x] _.findLastIndex  
 - [x] _.first -> head  
 - [x] _.flatten  
 - [x] _.flattenDeep  
 - [x] _.flattenDepth  
-- [ ] _.fromPairs  
+- [x] _.fromPairs  
 - [x] _.head  
 - [ ] _.indexOf  
 - [ ] _.initial  

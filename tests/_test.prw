@@ -18,6 +18,7 @@ TestSuite _test Description 'Lodash AdvPL implementation' Verbose
     Feature Flatten        Description 'Flattens array a single level deep.'
     Feature FlattenDeep    Description 'Recursively flattens array.'
     Feature FlattenDepth   Description 'Recursively flatten array up to depth times.'
+    Feature FromPairs      Description 'The inverse of _.toPairs; this method returns an object composed from key-value pairs.'
     Feature Head           Description 'Gets the first element of array.'
 EndTestSuite
 
@@ -118,6 +119,12 @@ Feature FlattenDepth TestSuite _test
 
     ::Expect( _:flattenDepth( {1, {2, {3, {4}}, 5}}, 1 ) ):ToBe( {1, 2, {3, {4}}, 5} )
     ::Expect( _:flattenDepth( {1, {2, {3, {4}}, 5}}, 2 ) ):ToBe( {1, 2, 3, {4}, 5} )
+    
+Return
+
+Feature FromPairs TestSuite _test
+
+    ::Expect( FwJsonSerialize(_:fromPairs( { {'a', 1} , {'b', 2} } )) ):ToBe('{"a":1,"b":2}' )
     
 Return
 
