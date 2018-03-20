@@ -1,6 +1,7 @@
 # TODO 
 
 ## Array
+
 - [x] _.chunk  
 - [x] _.compact  
 - [x] _.concat  
@@ -68,6 +69,7 @@
 - [ ] _.zipWith  
 
 ## Collection  
+
 - [ ] _.countBy  
 - [ ] _.each -> forEach  
 - [ ] _.eachRight -> forEachRight  
@@ -98,6 +100,7 @@
 - [ ] _.sortBy  
 
 ## Date
+
 - [ ] _.now  
 - [ ] Function  
 - [ ] _.after  
@@ -125,6 +128,7 @@
 - [ ] _.wrap  
 
 ## Lang
+
 - [ ] _.castArray  
 - [ ] _.clone  
 - [ ] _.cloneDeep  
@@ -183,6 +187,7 @@
 - [ ] _.toString  
 
 ## Math
+
 - [ ] _.add  
 - [ ] _.ceil  
 - [ ] _.divide  
@@ -200,11 +205,13 @@
 - [ ] _.sumBy  
 
 ## Number  
+
 - [ ] _.clamp  
 - [ ] _.inRange  
 - [ ] _.random  
 
 ## Object  
+
 - [ ] _.assign  
 - [ ] _.assignIn  
 - [ ] _.assignInWith  
@@ -254,6 +261,7 @@
 - [ ] _.valuesIn  
 
 ## Seq
+
 - [ ] _  
 - [ ] _.chain  
 - [ ] _.tap  
@@ -270,6 +278,7 @@
 - [ ] _.prototype.valueOf -> value  
 
 ## String  
+
 - [ ] _.camelCase  
 - [ ] _.capitalize  
 - [ ] _.deburr  
@@ -302,6 +311,7 @@
 - [ ] _.words  
 
 ## Util
+
 - [ ] _.attempt  
 - [ ] _.bindAll  
 - [ ] _.cond  
