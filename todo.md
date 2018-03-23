@@ -27,9 +27,9 @@
 - [ ] _.intersectionBy  
 - [ ] _.intersectionWith  
 - [ ] _.join  
-- [ ] _.last  
-- [ ] _.lastIndexOf  
-- [ ] _.nth  
+- [x] _.last  
+- [x] _.lastIndexOf  
+- [x] _.nth  
 - [ ] _.pull  
 - [ ] _.pullAll  
 - [ ] _.pullAllBy  

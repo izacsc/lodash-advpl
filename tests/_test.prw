@@ -4,7 +4,7 @@
 
 import lodash
 
-TestSuite _test Description 'Lodash AdvPL implementation' //Verbose
+TestSuite _test Description 'Lodash AdvPL implementation' Verbose
     Feature Chunk          Description 'Creates an array of elements split into groups the length of size.'// If array cant be split evenly, the final chunk will be the remaining elements.'
     Feature Compact        Description 'Creates an array with all falsey values removed ( .F., Nil, 0, "")'
     Feature Concat         Description 'Creates a new array concatenating array with arrays and/or values.'
@@ -22,6 +22,9 @@ TestSuite _test Description 'Lodash AdvPL implementation' //Verbose
     Feature Head           Description 'Gets the first element of array.'
     Feature IndexOf        Description 'Gets the index of the first occurrence of value is found in array.'// If fromIndex is negative, its used as the offset from the end of array.'
     Feature Initial        Description 'Gets all but the last element of array.'
+    Feature Last           Description 'Gets the last element of array.'
+    Feature LastIndexOf    Description 'This method is like _.indexOf but iterates right to left.'
+    Feature nth            Description 'Gets the element at index n of array. If n negative, from the end'// is returned.'
 EndTestSuite
 
 Feature Chunk TestSuite _test
@@ -147,6 +150,26 @@ Return
 Feature Initial TestSuite _test
 
     ::Expect(_:initial( { 1, 2, 3 } )):ToBe( { 1, 2 } )
+    
+Return
+
+Feature Last TestSuite _test
+
+    ::Expect(_:last( { 1, 2, 3 } )):ToBe( 3 )
+    
+Return
+
+Feature LastIndexOf TestSuite _test
+
+    ::Expect(_:lastIndexOf( { 1, 2, 1, 2 }, 2 )):ToBe( 4 )
+    ::Expect(_:lastIndexOf( { 1, 2, 1, 2 }, 2, 2 )):ToBe( 2 )
+    
+Return
+
+Feature nth TestSuite _test
+
+    ::Expect(_:nth( { 'a', 'b' ,'c', 'd'}, 2 )):ToBe('b' )
+    ::Expect(_:nth( { 'a', 'b' ,'c', 'd'}, -2 )):ToBe( 'c' )
     
 Return
 

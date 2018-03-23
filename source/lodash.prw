@@ -2,6 +2,10 @@
 #include "protheus.ch"
 #include "lodash.ch"
 
+#DEFINE INFINITY  1/(0.1^30) //O mais perto que eu cheguei
+#DEFINE CLONE_DEEP_FLAG 1
+#DEFINE MAX_SAFE_INTEGER 9007199254740991
+
 User Function _( id )
     Local nActivation := 0
     Local cProcname   := ""
@@ -49,6 +53,9 @@ Class lodash From LongNameClass
     Method head( )
     Method indexOf( )
     Method initial( )
+    Method last( )
+    Method lastIndexOf( )
+    Method nth( )
 
 EndClass
 
@@ -191,9 +198,54 @@ Method dropRight( array, n, guard ) Class lodash
 
     Return baseSlice( array, 0, If n < 0 ? 0 : n )
 
-Static Function toInteger( n )
-    //TODO implementar
-    Return If n == Nil ?  0 : n
+Static Function toInteger( value )
+    Local result    := toFinite( value )
+    Local remainder := result % 1
+
+    Return If remainder > 0 ? result - remainder : result
+
+Static Function  toFinite( value )
+    Local sign 
+
+    If value == Nil
+        Return 0
+    EndIf
+
+    value := toNumber( value )
+
+    If value == INFINITY .Or. value == -INFINITY
+        sign := If value < 0 ? -1 : 1 
+        Return sign * MAX_INTEGER
+    EndIf
+
+    Return If value == value ? value : 0
+
+Static Function toNumber( value )
+    Local isBinary
+
+    If ValType(value) == 'N'
+        Return value
+    EndIf
+
+    If isSymbol( value )
+        Return NAN
+    EndIf
+
+    // If isObject( value )
+    //     Local other := If typeof value.valueOf == 'function' ? value.valueOf( ) : value
+    //     value := If isObject( other ) ? ( other + '' ) : other
+    // EndIf
+
+    If Valtype(value) != 'C'
+        Return If value == 0 ? value : +value
+    EndIf
+
+    value := AllTrim(value)
+    Return Val(value)
+    // isBinary :=  .F. //reIsBinary:test( value )
+    // Return If ( isBinary .Or. .F. ;//reIsOctal:test( value ) );
+    //        ? freeParseInt( value.slice( 2 ), isBinary ? 2 : 8 )
+    //        : ( reIsBadHex.test( value ) ? NAN : +value )
 
 Static Function toLength( n )
     //TODO implementar
@@ -306,9 +358,6 @@ Static Function getIteratee( arg1, arg2 )
 
     Return If arg1 != Nil ? Eval result( arg1, arg2 ) : result
 
-
-#DEFINE CLONE_DEEP_FLAG 1
-
  Static Function iteratee( fun )
       Return baseIteratee( fun )
     //   Return baseIteratee( If ValType( func ) == 'B' ? func : baseClone( func, CLONE_DEEP_FLAG ) )
@@ -327,14 +376,14 @@ Function baseIteratee( value )
         Return Function( value )->identity( value )
     EndIf
 
-    // If ValType( value ) == 'O' )
-    // Return If isArray( value );
-    //     ? baseMatchesProperty( value[ 0 ], value[ 1 ] );
-    //     : baseMatches( value )
-    //
-    // EndIf
+    If ValType( value ) == 'O' 
+    Return If isArray( value );
+        ? baseMatchesProperty( value[ 0 ], value[ 1 ] );
+        : baseMatches( value )
+    
+    EndIf
 
-    // Return property( value )
+    Return property( value )
 
 Static Function identity( value )
     Return value
@@ -358,23 +407,23 @@ Method findIndex( array, predicate, fromIndex ) Class lodash
     Return baseFindIndex( array, getIteratee( predicate, 3 ), index )
 
 Method findLastIndex( array, predicate, fromIndex ) Class lodash
-        Local length := If array == Nil ? 0 : Len( array )
-        Local index  := 0
+    Local length := If array == Nil ? 0 : Len( array )
+    Local index  := 0
 
-        If length < 1
-            Return -1
-        EndIf
+    If length < 1
+        Return -1
+    EndIf
 
-        index := length
+    index := length
 
-        If fromIndex != Nil
-            index := toInteger( fromIndex )
-            index := If fromIndex < 0 ;
-                        ? Max( length + index, 0 );
-                        : Min( index, length )
-        EndIf
+    If fromIndex != Nil
+        index := toInteger( fromIndex )
+        index := If fromIndex < 0 ;
+                    ? Max( length + index, 0 );
+                    : Min( index, length )
+    EndIf
 
-        Return baseFindIndex( array, getIteratee( predicate, 3 ), index, .T. )
+    Return baseFindIndex( array, getIteratee( predicate, 3 ), index, .T. )
 
 Static Function baseFindIndex( array, predicate, fromIndex, fromRight )
 
@@ -400,15 +449,15 @@ Method fromPairs( pairs ) Class lodash
         result[ pair[ 1 ] ] := pair[ 2 ]
     EndDo
 
-    return result
+    Return result
 
 Method indexOf( array, value, fromIndex ) Class lodash
 
     Local length := If array == Nil ? 0 : Len( array )
     Local index  := 0
-    
-    If !length
-        return -1
+
+    If length < 1
+        Return -1
     EndIf
 
     index := If fromIndex == Nil ? 1 : toInteger( fromIndex )
@@ -417,7 +466,7 @@ Method indexOf( array, value, fromIndex ) Class lodash
         index := Max( length + index, 1)
     EndIf
 
-    return baseIndexOf( array, value, index )
+    Return baseIndexOf( array, value, index )
 
 Static Function baseIndexOf( array, value, fromIndex )
     //   Return If value === value;
@@ -439,5 +488,63 @@ Static Function strictIndexOf( array, value, fromIndex )
 
 Method initial( array ) Class lodash
     Local length := If array == Nil ? 0 : Len( array )
-    
+
     Return If length > 0 ? baseSlice( array, 0, -1 ) : {}
+
+Method last( array ) Class lodash
+    Local length := If array == Nil ? 0 : Len( array )
+    Return If length > 0 ? array[ length ] : Nil
+
+
+Method lastIndexOf( array, value, fromIndex ) Class lodash
+    Local length := If array == Nil ? 0 : Len( array )
+    Local index := length
+
+    If length < 1
+        Return -1
+   EndIf
+
+    If fromIndex != Nil
+        index := toInteger( fromIndex )
+        index := If index < 0 ? Max( length + index, 0 ) : Min( index, length - 1 )
+    EndIf
+
+    Return strictLastIndexOf( array, value, index )
+    // Return value === value
+        // ? strictLastIndexOf( array, value, index )
+        // : baseFindIndex( array, baseIsNaN, index, .T. )
+
+Static Function strictLastIndexOf( array, value, fromIndex )
+    Local index := fromIndex + 1
+
+    While index -- > 0
+        If array[ index ] == value
+            Return index
+        EndIf
+    EndDo
+
+    Return - 1
+
+Method nth( array, n ) Class lodash
+
+    Return If ( array != Nil .And. Len( array ) > 0) ? baseNth( array, toInteger( n ) ) : Nil
+
+Static Function baseNth( array, n )
+    Local length := Len( array )
+
+    If length == Nil
+        Return
+    EndIf
+
+    n += If n < 0 ? length + 1  : 0
+    Return If isIndex( n, length ) ? array[ n ] : Nil
+
+Static Function isIndex( value, length )
+    Local type := ValType(value)
+
+    length := If length == Nil ? MAX_SAFE_INTEGER : length
+
+    Return !length == Nil .And.;
+        ( type == 'N' .Or.;
+        ( .F. .And. type != 'symbol' .And. reIsUint:test( value ) ) ) .And.;
+        ( value > 0 .And. value % 1 == 0 .And. value < length )
