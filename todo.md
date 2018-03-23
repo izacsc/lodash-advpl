@@ -30,10 +30,10 @@
 - [x] _.last  
 - [x] _.lastIndexOf  
 - [x] _.nth  
-- [ ] _.pull  
-- [ ] _.pullAll  
-- [ ] _.pullAllBy  
-- [ ] _.pullAllWith  
+- [x] _.pull  
+- [x] _.pullAll  
+- [x] _.pullAllBy  
+- [x] _.pullAllWith  
 - [ ] _.pullAt  
 - [ ] _.remove  
 - [ ] _.reverse  

@@ -7,3 +7,4 @@
 
 //translate to make dynamic arguments an array
 #translate _:concat(<value>, [<prm,...>]) => _:concatenate(<value>, {[<prm>]})
+#translate _:pull(<value>, [<prm,...>]) => _:pullAll(<value>, {[<prm>]})

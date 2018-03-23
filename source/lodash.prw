@@ -2,14 +2,19 @@
 #include "protheus.ch"
 #include "lodash.ch"
 
-#DEFINE INFINITY  1/(0.1^30) //O mais perto que eu cheguei
+#DEFINE INFINITY  1/(0.1^30) //The closer I could get
 #DEFINE CLONE_DEEP_FLAG 1
 #DEFINE MAX_SAFE_INTEGER 9007199254740991
+
+//problems with 10 char size limit. 
+// Functions will be compiled as follows:
+// base -> b   example: baseIndexOf   -> bIndexOf
+// strict -> s example: strictIndexOf -> sIndexOf 
 
 User Function _( id )
     Local nActivation := 0
     Local cProcname   := ""
-
+    
     If id == Nil
         id := "_"
     EndIf
@@ -56,6 +61,9 @@ Class lodash From LongNameClass
     Method last( )
     Method lastIndexOf( )
     Method nth( )
+    Method pullAll( )
+    Method pullAllBy( )
+    Method pullAllWith( )
 
 EndClass
 
@@ -90,7 +98,7 @@ Method chunk( array, size, guard ) Class lodash
     result := Array( Ceiling( ( length / size ) ) )
 
     While index < length
-        result[ resIndex++ ] := baseSlice( array, index, ( index + size ) )
+        result[ resIndex++ ] := bSlice( array, index, ( index + size ) )
         index += size
     EndDo
 
@@ -135,17 +143,17 @@ Static Function arrayPush( array, values )
 
 Method flattenDepth( array, depth ) Class lodash
 
-    Return baseFlatten( array, depth )
+    Return bFlatten( array, depth )
 
 Method flatten( array ) Class lodash
 
-    Return baseFlatten( array, 1 )
+    Return bFlatten( array, 1 )
 
 Method flattenDeep( array ) Class lodash
 
-    Return baseFlatten( array, 9999 )
+    Return bFlatten( array, 9999 )
 
-Static Function baseFlatten( array, depth, result )
+Static Function bFlatten( array, depth, result )
     Local index  := 0
     Local length := Len( array )
     Local value
@@ -158,7 +166,7 @@ Static Function baseFlatten( array, depth, result )
         value := array[ index ]
         If ( depth > 0 .And. ValType( value ) == "A" )
             If ( depth > 1 )
-                baseFlatten( value, depth - 1, result )
+                bFlatten( value, depth - 1, result )
             Else
                 arrayPush( result, value )
             EndIf
@@ -184,7 +192,7 @@ Method drop( array, n, guard ) Class lodash
 
     n := If ( guard != Nil .Or. n == Nil ) ? 1 : toInteger( n )
 
-    Return baseSlice( array, If n < 0 ? 0 : n, length )
+    Return bSlice( array, If n < 0 ? 0 : n, length )
 
 Method dropRight( array, n, guard ) Class lodash
     Local length := If array == Nil ? 0 : Len( array )
@@ -196,7 +204,7 @@ Method dropRight( array, n, guard ) Class lodash
     n := If ( guard != Nil .Or. n == Nil ) ? 1 : toInteger( n )
     n := length - n
 
-    Return baseSlice( array, 0, If n < 0 ? 0 : n )
+    Return bSlice( array, 0, If n < 0 ? 0 : n )
 
 Static Function toInteger( value )
     Local result    := toFinite( value )
@@ -251,7 +259,7 @@ Static Function toLength( n )
     //TODO implementar
     Return If n == Nil ?  1 : n
 
-Static Function baseSlice( array, start, finish )
+Static Function bSlice( array, start, finish )
     Local index  := 0
     Local length := Len( array )
     Local result := { }
@@ -288,10 +296,10 @@ Method fill( array, value, start, finish ) Class lodash
         finish := length
     EndIf
 
-    Return baseFill( array, value, start, finish )
+    Return bFill( array, value, start, finish )
 
 
-Function baseFill( array, value, start, finish )
+Function bFill( array, value, start, finish )
     Local length := Len( array )
 
     If start == Nil
@@ -324,15 +332,15 @@ Return .F.
 
 Method dropWhile( array, predicate ) Class lodash
     Return If array != Nil .And. Len( array ) > 0 ;
-        ? baseWhile( array, getIteratee( predicate, 3 ), .T. );
+        ? bWhile( array, getIteratee( predicate, 3 ), .T. );
         : { }
 
 Method dropRightWhile( array, predicate ) Class lodash
     Return If array != Nil .And. Len( array ) > 0 ;
-        ? baseWhile( array, getIteratee( predicate, 3 ), .T., .T. );
+        ? bWhile( array, getIteratee( predicate, 3 ), .T., .T. );
         : { }
 
-Static Function baseWhile( array, predicate, isDrop, fromRight )
+Static Function bWhile( array, predicate, isDrop, fromRight )
     Local length  := Len( array )
     Local index   := If fromRight ? length : 0
     Local start   := 0
@@ -348,9 +356,9 @@ Static Function baseWhile( array, predicate, isDrop, fromRight )
     EndIf
 
     If isDrop
-        Return baseSlice( array, If fromRight ? 0 : index - 1, If fromRight ? index : length )
+        Return bSlice( array, If fromRight ? 0 : index - 1, If fromRight ? index : length )
     Else
-        Return baseSlice( array, If fromRight ? index + 1  : 0, If fromRight ? length : index - 1 )
+        Return bSlice( array, If fromRight ? index + 1  : 0, If fromRight ? length : index - 1 )
     EndIf
 
 Static Function getIteratee( arg1, arg2 )
@@ -359,14 +367,14 @@ Static Function getIteratee( arg1, arg2 )
     Return If arg1 != Nil ? Eval result( arg1, arg2 ) : result
 
  Static Function iteratee( fun )
-      Return baseIteratee( fun )
-    //   Return baseIteratee( If ValType( func ) == 'B' ? func : baseClone( func, CLONE_DEEP_FLAG ) )
+      Return bIteratee( fun )
+    //   Return bIteratee( If ValType( func ) == 'B' ? func : bClone( func, CLONE_DEEP_FLAG ) )
 
-Static Function baseClone( par1, flag )
+Static Function bClone( par1, flag )
 
     Return par1
 
-Function baseIteratee( value )
+Function bIteratee( value )
 
     If ValType( value ) == 'B'
         Return value
@@ -378,8 +386,8 @@ Function baseIteratee( value )
 
     If ValType( value ) == 'O' 
     Return If isArray( value );
-        ? baseMatchesProperty( value[ 0 ], value[ 1 ] );
-        : baseMatches( value )
+        ? bMatchesProperty( value[ 0 ], value[ 1 ] );
+        : bMatches( value )
     
     EndIf
 
@@ -404,7 +412,7 @@ Method findIndex( array, predicate, fromIndex ) Class lodash
         index := Min( index, length )
     EndIf
 
-    Return baseFindIndex( array, getIteratee( predicate, 3 ), index )
+    Return bFindIndex( array, getIteratee( predicate, 3 ), index )
 
 Method findLastIndex( array, predicate, fromIndex ) Class lodash
     Local length := If array == Nil ? 0 : Len( array )
@@ -423,9 +431,9 @@ Method findLastIndex( array, predicate, fromIndex ) Class lodash
                     : Min( index, length )
     EndIf
 
-    Return baseFindIndex( array, getIteratee( predicate, 3 ), index, .T. )
+    Return bFindIndex( array, getIteratee( predicate, 3 ), index, .T. )
 
-Static Function baseFindIndex( array, predicate, fromIndex, fromRight )
+Static Function bFindIndex( array, predicate, fromIndex, fromRight )
 
     Local length := Len( array ) + 1
     Local index := If fromRight ? fromIndex + 1 : fromIndex - 1
@@ -466,15 +474,15 @@ Method indexOf( array, value, fromIndex ) Class lodash
         index := Max( length + index, 1)
     EndIf
 
-    Return baseIndexOf( array, value, index )
+    Return bIndexOf( array, value, index )
 
-Static Function baseIndexOf( array, value, fromIndex )
+Static Function bIndexOf( array, value, fromIndex )
     //   Return If value === value;
-    //     ? strictIndexOf( array, value, fromIndex );
-    //     : baseFindIndex( array, baseIsNaN, fromIndex )
-      Return strictIndexOf( array, value, fromIndex )
+    //     ? sIndexOf( array, value, fromIndex );
+    //     : bFindIndex( array, bIsNaN, fromIndex )
+      Return sIndexOf( array, value, fromIndex )
 
-Static Function strictIndexOf( array, value, fromIndex )
+Static Function sIndexOf( array, value, fromIndex )
     Local index := fromIndex - 1
     Local length := Len( array )
 
@@ -489,7 +497,7 @@ Static Function strictIndexOf( array, value, fromIndex )
 Method initial( array ) Class lodash
     Local length := If array == Nil ? 0 : Len( array )
 
-    Return If length > 0 ? baseSlice( array, 0, -1 ) : {}
+    Return If length > 0 ? bSlice( array, 0, -1 ) : {}
 
 Method last( array ) Class lodash
     Local length := If array == Nil ? 0 : Len( array )
@@ -509,12 +517,12 @@ Method lastIndexOf( array, value, fromIndex ) Class lodash
         index := If index < 0 ? Max( length + index, 0 ) : Min( index, length - 1 )
     EndIf
 
-    Return strictLastIndexOf( array, value, index )
+    Return sLastIndexOf( array, value, index )
     // Return value === value
-        // ? strictLastIndexOf( array, value, index )
-        // : baseFindIndex( array, baseIsNaN, index, .T. )
+        // ? sLastIndexOf( array, value, index )
+        // : bFindIndex( array, bIsNaN, index, .T. )
 
-Static Function strictLastIndexOf( array, value, fromIndex )
+Static Function sLastIndexOf( array, value, fromIndex )
     Local index := fromIndex + 1
 
     While index -- > 0
@@ -525,11 +533,23 @@ Static Function strictLastIndexOf( array, value, fromIndex )
 
     Return - 1
 
+Static Function bIndexOfWith( array, value, fromIndex, comparator )
+    Local index := fromIndex - 1
+    Local length := Len( array )
+
+    While index ++ < length
+        If Eval comparator( array[ index ], value )
+            Return index
+        EndIf
+    EndDo
+
+    Return -1
+
 Method nth( array, n ) Class lodash
 
-    Return If ( array != Nil .And. Len( array ) > 0) ? baseNth( array, toInteger( n ) ) : Nil
+    Return If ( array != Nil .And. Len( array ) > 0) ? bNth( array, toInteger( n ) ) : Nil
 
-Static Function baseNth( array, n )
+Static Function bNth( array, n )
     Local length := Len( array )
 
     If length == Nil
@@ -548,3 +568,72 @@ Static Function isIndex( value, length )
         ( type == 'N' .Or.;
         ( .F. .And. type != 'symbol' .And. reIsUint:test( value ) ) ) .And.;
         ( value > 0 .And. value % 1 == 0 .And. value < length )
+
+Method pullAll( array, values ) Class lodash
+    Return If ( array != Nil .And. Len( array ) > 0 .And. values != Nil .And. Len( values ) > 0 );
+            ? bPullAll( array, values );
+            : array
+
+Method pullAllBy( array, values, iteratee ) Class lodash
+    Return If ( array != Nil .And. Len( array ) > 0 .And. values != Nil .And. Len( values ) > 0 );
+            ? bPullAll( array, values, getIteratee( iteratee, 2 ) );
+            : array
+
+Method pullAllWith( array, values, comparator ) Class lodash
+    Return If ( array != Nil .And. Len( array ) > 0 .And. values != Nil .And. Len( values ) > 0 );
+            ? bPullAll( array, values, Nil, comparator );
+            : array
+
+
+Static Function bPullAll( array, values, iteratee, comparator )
+    Local indexOf := Function( array, value, fromIndex )-> bIndexOf( array, value, fromIndex )
+    Local index := 0
+    Local length := Len( values )
+    Local seen := array
+    Local fromIndex
+    Local value
+    Local computed
+
+    If array == values
+        values := AClone( values )
+    EndIf
+
+    If comparator != Nil
+        indexOf := Function( array, value, fromIndex, comparator )-> bIndexOfWith( array, value, fromIndex, comparator )
+    EndIf
+
+    If iteratee != Nil
+        seen := arrayMap( array, bUnary( iteratee ) )
+    EndIf
+
+    While index++ < length
+        fromIndex := 1
+        value := values[ index ]
+        computed := If iteratee != Nil ? Eval iteratee( value ) : value
+
+        While ( fromIndex := Eval indexOf( seen, computed, fromIndex, comparator ) ) > -1
+            If seen != array
+                ADel( seen, fromIndex ) //splice.call( seen, fromIndex, 1 )
+                ASize( seen, Len( seen ) - 1 )
+            EndIf
+            ADel( array, fromIndex ) // splice.call( array, fromIndex, 1 )
+            ASize( array, Len( array ) - 1 )
+        EndDo
+    EndDo
+
+    Return array
+
+Static Function arrayMap( array, iteratee )
+    Local index := 0
+    Local length := If array == Nil ? 0 : Len( array )
+    Local result := Array( length )
+
+    While index++ < length
+        result[ index ] := Eval iteratee( array[ index ], index, array )
+    EndDo
+    
+    Return result
+
+Static Function bUnary( block )
+      
+      Return Function( value ) -> Eval block( value )

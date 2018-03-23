@@ -24,7 +24,11 @@ TestSuite _test Description 'Lodash AdvPL implementation' Verbose
     Feature Initial        Description 'Gets all but the last element of array.'
     Feature Last           Description 'Gets the last element of array.'
     Feature LastIndexOf    Description 'This method is like _.indexOf but iterates right to left.'
-    Feature nth            Description 'Gets the element at index n of array. If n negative, from the end'// is returned.'
+    Feature Nth            Description 'Gets the element at index n of array. If n negative, from the end'// is returned.'
+    Feature Pull           Description 'Removes all given values from array '// is returned.'
+    Feature PullAll        Description 'This method is like _.pull but accepts an array of values to remove.'// is returned.'
+    Feature PullAllBy      Description 'This method is like _.pullAll but accepts an iteratee with argument value.'// is returned.'
+    Feature PullAllWith    Description 'This method is like _.pullAll but accepts an comparator'// is returned.'
 EndTestSuite
 
 Feature Chunk TestSuite _test
@@ -170,6 +174,38 @@ Feature nth TestSuite _test
 
     ::Expect(_:nth( { 'a', 'b' ,'c', 'd'}, 2 )):ToBe('b' )
     ::Expect(_:nth( { 'a', 'b' ,'c', 'd'}, -2 )):ToBe( 'c' )
+    
+Return
+
+Feature pull TestSuite _test
+    Local array := { 'a', 'b' ,'c', 'd', 'a', 'b' ,'c'}
+
+    ::Expect(_:pull( array , 'a', 'b' )):ToBe( { 'c', 'd', 'c'} )
+    ::Expect(array):ToBe( { 'c', 'd', 'c'} )
+    
+Return
+
+Feature pullAll TestSuite _test
+    Local array := { 'a', 'b' ,'c', 'd', 'a', 'b' ,'c'}
+
+    ::Expect(_:pullAll( array , {'a', 'b'} )):ToBe( { 'c', 'd', 'c'} )
+    ::Expect(array):ToBe( { 'c', 'd', 'c'} )
+    
+Return
+
+Feature pullAllBy TestSuite _test
+
+    // ::Expect(_:pullAllBy( { 'a', 'b' ,'c', 'd', 'a', 'b' ,'c'} , {'a', 'b'}, { | value | value } )):ToBe( { 'c', 'd', 'c'} )
+    ::Expect(_:pullAllBy( { 'a', 'b' ,'c', 'd', 'a', 'b' ,'c'} , {'a', 'b'}, { | value | Asc(value) } )):ToBe( { 'c', 'd', 'c'} )
+    // ::Expect(_:pullAllBy( { 'a', 'b' ,'c', 'd', 'a', 'b' ,'c'} , {'a', 'b'}, { |value| If( value < 'd', value, '') } )):ToBe( { 'c', 'c'})
+    
+Return
+
+Feature pullAllWith TestSuite _test
+
+    ::Expect(_:pullAllWith( { 'a', 'b' ,'c', 'd', 'a', 'b' ,'c'} , {'a', 'b'}, { | | .F. } )):ToBe( { 'a', 'b' ,'c', 'd', 'a', 'b' ,'c' } )
+    ::Expect(_:pullAllWith( { 'a', 'b' ,'c', 'd', 'a', 'b' ,'c'} , {'a', 'b'}, { | | .T. } )):ToBe( { } )
+    ::Expect(_:pullAllWith( { 'a', 'b' ,'c', 'd', 'a', 'b' ,'c'} , {'a'}, { |value, comp| value != comp } )):ToBe( { 'a', 'a'}  )
     
 Return
 
