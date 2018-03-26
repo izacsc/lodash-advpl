@@ -24,11 +24,12 @@ TestSuite _test Description 'Lodash AdvPL implementation' Verbose
     Feature Initial        Description 'Gets all but the last element of array.'
     Feature Last           Description 'Gets the last element of array.'
     Feature LastIndexOf    Description 'This method is like _.indexOf but iterates right to left.'
-    Feature Nth            Description 'Gets the element at index n of array. If n negative, from the end'// is returned.'
-    Feature Pull           Description 'Removes all given values from array '// is returned.'
-    Feature PullAll        Description 'This method is like _.pull but accepts an array of values to remove.'// is returned.'
-    Feature PullAllBy      Description 'This method is like _.pullAll but accepts an iteratee with argument value.'// is returned.'
-    Feature PullAllWith    Description 'This method is like _.pullAll but accepts an comparator'// is returned.'
+    Feature Nth            Description 'Gets the element at index n of array. If n negative, from the end'
+    Feature Pull           Description 'Removes all given values from array '
+    Feature PullAll        Description 'This method is like _.pull but accepts an array of values to remove.'
+    Feature PullAllBy      Description 'This method is like _.pullAll but accepts an iteratee with argument value.'
+    Feature PullAllWith    Description 'This method is like _.pullAll but accepts an comparator'
+    Feature PullAt         Description 'Removes elements from array corresponding to indexes and returns an array of removed elements.'
 EndTestSuite
 
 Feature Chunk TestSuite _test
@@ -206,6 +207,14 @@ Feature pullAllWith TestSuite _test
     ::Expect(_:pullAllWith( { 'a', 'b' ,'c', 'd', 'a', 'b' ,'c'} , {'a', 'b'}, { | | .F. } )):ToBe( { 'a', 'b' ,'c', 'd', 'a', 'b' ,'c' } )
     ::Expect(_:pullAllWith( { 'a', 'b' ,'c', 'd', 'a', 'b' ,'c'} , {'a', 'b'}, { | | .T. } )):ToBe( { } )
     ::Expect(_:pullAllWith( { 'a', 'b' ,'c', 'd', 'a', 'b' ,'c'} , {'a'}, { |value, comp| value != comp } )):ToBe( { 'a', 'a'}  )
+    
+Return
+
+Feature pullAt TestSuite _test
+    Local array := { 'a', 'b' ,'c', 'd'}
+    
+    ::Expect( _:pullAt( array, {1, 3} ) ):ToBe( {'a', 'c'} )
+    ::Expect( array):ToBe( {'b', 'd'} )
     
 Return
 

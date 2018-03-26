@@ -2,7 +2,7 @@
 #include "protheus.ch"
 #include "lodash.ch"
 
-#DEFINE INFINITY  1/(0.1^30) //The closer I could get
+#DEFINE INFINITY  1/(0.1^30) //The closer I could getValue
 #DEFINE CLONE_DEEP_FLAG 1
 #DEFINE MAX_SAFE_INTEGER 9007199254740991
 
@@ -64,6 +64,7 @@ Class lodash From LongNameClass
     Method pullAll( )
     Method pullAllBy( )
     Method pullAllWith( )
+    Method pullAt( )
 
 EndClass
 
@@ -636,4 +637,92 @@ Static Function arrayMap( array, iteratee )
 
 Static Function bUnary( block )
       
-      Return Function( value ) -> Eval block( value )
+    Return Function( value ) -> Eval block( value )
+
+Method pullAt ( array, indexes ) Class lodash
+    Local length := If array == Nil ? 0 : Len( array )
+    Local result := bAt( array, indexes )
+
+    bPullAt( array , ASort( arrayMap( indexes, { | index | If( isIndex( index, length ),  + index, index) } ) ) )
+
+    Return result
+
+function bPullAt( array, indexes )
+    Local length := If array  != Nil ? Len( indexes ) + 1 : 0
+    Local lastIndex := length - 1
+    Local index
+    Local previous
+
+    While length -- > 1
+        index := indexes[ length ]
+
+        If length == lastIndex .Or. index != previous
+            previous := index
+            If isIndex( index )
+                ADel( array, index )
+                ASize( array, Len( array ) - 1 )
+            else
+                baseUnset( array, index )
+            EndIf
+        EndIf
+    EndDo
+
+    Return array
+
+Static Function bAt( object, paths )
+    Local index := 0
+    Local length := Len( paths )
+    Local result := Array( length )
+    Local skip   := object == Nil
+
+    While index++ < length
+        result[ index ] := If skip ? Nil : getValue( object, paths[ index ] )
+    EndDo
+    
+    Return result
+
+//TODO
+Static Function baseUnset( object, path )
+    path := castPath( path, object )
+    object := parent( object, path )
+    Return object == Nil //.Or. delete object[ toKey( last( path ) ) ]
+
+Static Function getValue( object, path, defaultValue )
+    Local result := If object == Nil ? Nil : baseGet( object, path )
+    Return If result == Nil ? defaultValue : result
+
+Static Function baseGet( object, path )
+    Local index := 0
+    Local length := If ValType(path) == "N" ? 1 : Len( path )
+    Local result
+
+    path := castPath( path, object )
+
+    While object != Nil .And. index < length
+        index ++ 
+        result := object[ toKey( path[ index ] ) ]
+    EndDo
+
+    Return If ( index != Nil .And. index == length ) ? result : Nil
+
+Static Function toKey( value )
+    Return value
+    // If typeof value == 'string' .Or. isSymbol( value )
+    //     Return value
+    // }
+    // Local result := ( value + '' )
+    // Return If ( result == '0' .And. ( 1 / value ) == -INFINITY ) ? '-0' : result
+
+Static Function castPath( value, object )
+    
+    Return {value}
+    
+    // If isArray( value )
+    //     Return value
+    // EndIf
+
+    // Return If isKey( value, object ) ? [ value ] : stringToPath( toString( value ) )
+
+Static Function isArray(value)
+
+    Return Valtype(value) == 'A'
