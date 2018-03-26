@@ -34,8 +34,8 @@
 - [x] _.pullAll  
 - [x] _.pullAllBy  
 - [x] _.pullAllWith  
-- [ ] _.pullAt  
-- [ ] _.remove  
+- [x] _.pullAt  
+- [x] _.remove  
 - [ ] _.reverse  
 - [ ] _.slice  
 - [ ] _.sortedIndex  

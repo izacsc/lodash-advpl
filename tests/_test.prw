@@ -30,6 +30,9 @@ TestSuite _test Description 'Lodash AdvPL implementation' Verbose
     Feature PullAllBy      Description 'This method is like _.pullAll but accepts an iteratee with argument value.'
     Feature PullAllWith    Description 'This method is like _.pullAll but accepts an comparator'
     Feature PullAt         Description 'Removes elements from array corresponding to indexes and returns an array of removed elements.'
+    Feature Remove         Description 'Removes all elements from array that predicate returns truthy for and returns an array of the removed elements.'
+    Feature Reverse        Description 'Reverses array so that the first element becomes the last, the second element becomes the second to last, and so on.'
+    Feature Slice          Description 'Creates a slice of array from start up to, but not including, end.'
 EndTestSuite
 
 Feature Chunk TestSuite _test
@@ -216,6 +219,34 @@ Feature pullAt TestSuite _test
     ::Expect( _:pullAt( array, {1, 3} ) ):ToBe( {'a', 'c'} )
     ::Expect( array):ToBe( {'b', 'd'} )
     
+Return
+
+Feature Remove TestSuite _test
+    Local array := { 1, 2, 3, 4}
+    Local evens := { }
+    
+    evens := _:remove( array, { |n| n%2==0 })
+
+    ::Expect(array):Tobe({ 1, 3 })
+    ::Expect(evens):Tobe({ 2, 4 })
+
+Return
+
+Feature Reverse TestSuite _test
+    Local array := { 1, 2, 3}
+
+    ::Expect(_:reverse( array)):Tobe({ 3, 2, 1 })
+    ::Expect(array):Tobe({ 3, 2, 1 })
+
+Return
+
+Feature Slice TestSuite _test
+    Local array := { 1, 2, 3}
+
+    ::Expect( _:slice( array, 2) ):Tobe( { 2, 3 })
+    ::Expect( _:slice( array, 1, 2) ):Tobe( { 1 })
+    ::Expect( _:slice( array, 1, 4) ):Tobe( { 1, 2, 3 })
+
 Return
 
 CompileTestSuite _test

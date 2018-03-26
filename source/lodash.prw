@@ -65,6 +65,9 @@ Class lodash From LongNameClass
     Method pullAllBy( )
     Method pullAllWith( )
     Method pullAt( )
+    Method remove( )
+    Method reverse( )
+    Method slice( )
 
 EndClass
 
@@ -726,3 +729,59 @@ Static Function castPath( value, object )
 Static Function isArray(value)
 
     Return Valtype(value) == 'A'
+
+Method remove( array, predicate ) Class lodash
+    Local result := {}
+    Local index := 0
+    Local indexes := {}
+    Local length := Len( array )
+    Local value
+
+    If !( array != Nil .And. Len( array ) > 0 )
+        Return result
+    EndIf
+
+    predicate := getIteratee( predicate, 3 )
+
+    While index ++ < length
+        value := array[ index ]
+        If Eval predicate( value, index, array )
+            AAdd( result, value)
+            AAdd( indexes, value)
+        EndIf
+    EndDo
+
+    bPullAt( array, indexes )
+    Return result
+
+Method reverse( array ) Class lodash
+    Local reversed := {}
+    Local length := If array == Nil ? 0 : Len( array )
+    Local index := length + 1
+    
+    If array != Nil
+        While index -- > 1
+            AAdd(reversed, array[ index ] )
+        EndDo
+
+        array := reversed
+    EndIf
+
+    Return array
+
+Method slice( array, start, finish ) Class lodash
+    Local length := If array == Nil ? 0 : Len( array )
+    
+    If length == Nil
+        Return { }
+    EndIf
+
+    If finish .And. ValType(finish) != 'N' .And. isIterateeCall( array, start, finish )
+        start := 1
+        finish := length
+    Else
+        start := If start == Nil ? 1 : toInteger( start )
+        finish := If finish == Nil ? length : toInteger( finish ) - 1 
+    EndIf
+
+    Return bSlice( array, start - 1 , finish )
