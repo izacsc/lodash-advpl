@@ -36,17 +36,17 @@
 - [x] _.pullAllWith  
 - [x] _.pullAt  
 - [x] _.remove  
-- [ ] _.reverse  
-- [ ] _.slice  
-- [ ] _.sortedIndex  
-- [ ] _.sortedIndexBy  
-- [ ] _.sortedIndexOf  
-- [ ] _.sortedLastIndex  
-- [ ] _.sortedLastIndexBy  
-- [ ] _.sortedLastIndexOf  
+- [x] _.reverse  
+- [x] _.slice  
+- [x] _.sortedIndex  
+- [x] _.sortedIndexBy  
+- [x] _.sortedIndexOf  
+- [x] _.sortedLastIndex  
+- [x] _.sortedLastIndexBy  
+- [x] _.sortedLastIndexOf  
 - [ ] _.sortedUniq  
 - [ ] _.sortedUniqBy  
-- [ ] _.tail  
+- [x] _.tail  
 - [ ] _.take  
 - [ ] _.takeRight  
 - [ ] _.takeRightWhile  

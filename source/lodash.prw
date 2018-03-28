@@ -5,11 +5,15 @@
 #DEFINE INFINITY  1/(0.1^30) //The closer I could getValue
 #DEFINE CLONE_DEEP_FLAG 1
 #DEFINE MAX_SAFE_INTEGER 9007199254740991
+#DEFINE MAX_ARRAY_LENGTH 100000
+#DEFINE MAX_ARRAY_INDEX MAX_ARRAY_LENGTH 
+#DEFINE HALF_MAX_ARRAY_LENGTH NoRound(MAX_ARRAY_LENGTH / 2, 0 )
 
 //problems with 10 char size limit. 
 // Functions will be compiled as follows:
-// base -> b   example: baseIndexOf   -> bIndexOf
+// b -> b   example: bIndexOf   -> bIndexOf
 // strict -> s example: strictIndexOf -> sIndexOf 
+// bSortedIndex -> bSortInd
 
 User Function _( id )
     Local nActivation := 0
@@ -68,6 +72,13 @@ Class lodash From LongNameClass
     Method remove( )
     Method reverse( )
     Method slice( )
+    Method sortedIndex( )
+    Method sortedIndexBy( )
+    Method sortedIndexOf( )
+    Method sortedLastIndex( )
+    Method sortedLastIndexBy( )
+    Method sortedLastIndexOf( )
+    Method tail( )
 
 EndClass
 
@@ -665,7 +676,7 @@ function bPullAt( array, indexes )
                 ADel( array, index )
                 ASize( array, Len( array ) - 1 )
             else
-                baseUnset( array, index )
+                bUnset( array, index )
             EndIf
         EndIf
     EndDo
@@ -685,16 +696,16 @@ Static Function bAt( object, paths )
     Return result
 
 //TODO
-Static Function baseUnset( object, path )
+Static Function bUnset( object, path )
     path := castPath( path, object )
     object := parent( object, path )
     Return object == Nil //.Or. delete object[ toKey( last( path ) ) ]
 
 Static Function getValue( object, path, defaultValue )
-    Local result := If object == Nil ? Nil : baseGet( object, path )
+    Local result := If object == Nil ? Nil : bGet( object, path )
     Return If result == Nil ? defaultValue : result
 
-Static Function baseGet( object, path )
+Static Function bGet( object, path )
     Local index := 0
     Local length := If ValType(path) == "N" ? 1 : Len( path )
     Local result
@@ -785,3 +796,121 @@ Method slice( array, start, finish ) Class lodash
     EndIf
 
     Return bSlice( array, start - 1 , finish )
+
+Method sortedIndex( array, value ) Class lodash
+    Return bSortInd( array, value )
+
+Method sortedLastIndex( array, value ) Class lodash
+    Return bSortInd( array, value, .T. )
+
+Static Function bSortInd( array, value, retHighest )
+    Local low := 0
+    Local high := If array == Nil ? low : Len( array )
+    Local mid
+    Local computed
+
+    If Valtype( value ) == 'N' .And. high <= HALF_MAX_ARRAY_LENGTH
+        While low < high
+            mid := NoRound( ( low + high ) / 2 , 0)
+            computed := array[ mid ]
+
+            If computed != Nil .And. !isSymbol( computed ) .And. ; 
+               If  retHighest ?  computed <= value  : computed < value  
+                low := mid + 1
+            else
+                high := mid
+            EndIf
+        EndDo 
+
+        Return high
+    EndIf
+
+    Return bSortIndBy( array, value, { |value| identity(value) } , retHighest )
+
+function bSortIndBy( array, value, iteratee, retHighest )
+
+    Local low := 0
+    Local high := If array == Nil ? 0 : Len( array )
+    Local valIsNaN := value != value
+    Local valIsNil := value == Nil
+    Local valIsSymbol := isSymbol( value )
+    Local mid
+    Local computed
+    Local othIsDefined
+    Local othIsNil
+    Local othIsReflexive
+    Local othIsSymbol
+    Local setLow
+
+    value := Eval iteratee( value )
+
+    While low < high
+        mid := NoRound( ( low + high ) / 2 , 0)
+        computed := Eval iteratee( array[ mid ] )
+        othIsDefined := computed != Nil
+        othIsNil := computed == Nil
+        othIsReflexive := computed == computed
+        othIsSymbol := isSymbol( computed )
+
+        If valIsNaN
+            setLow := retHighest .Or. othIsReflexive
+        elseIf valIsNil
+            setLow := othIsReflexive .And. ( retHighest .Or. othIsDefined )
+        elseIf valIsNil
+            setLow := othIsReflexive .And. othIsDefined .And. ( retHighest .Or. !othIsNil )
+        elseIf valIsSymbol
+            setLow := othIsReflexive .And. othIsDefined .And. !othIsNil .And. ( retHighest .Or. !othIsSymbol )
+        elseIf othIsNil .Or. othIsSymbol
+            setLow := .F.
+        else
+            setLow := If retHighest ? ( computed <= value ) : ( computed < value )
+        EndIf
+        If setLow
+            low := mid + 1
+        else
+            high := mid
+        EndIf
+    EndDo
+
+    Return Min( high, MAX_ARRAY_INDEX )
+
+Static Function isSymbol( value )
+    Return .F.
+
+Method sortedIndexOf( array, value ) Class lodash
+    Local length := If array == Nil ? 0 : Len( array )
+    Local index
+
+    If length > 0
+        index := bSortInd( array, value )
+        If index < length .And. eq( array[ index ], value )
+            Return index
+        EndIf
+    EndIf
+
+    Return -1
+
+Method sortedLastIndexOf( array, value ) Class lodash
+    Local length := If array == Nil ? 0 : Len( array )
+    Local index
+
+    If length > 0
+        index := bSortInd( array, value, .T. ) - 1 // ?
+        If eq( array[ index ], value )
+            Return index
+        EndIf
+    EndIf
+    Return -1
+
+Method sortedIndexBy( array, value, iteratee ) Class lodash
+    Return bSortIndBy( array, value, getIteratee( iteratee, 2 ) )
+
+Method sortedLastIndexBy( array, value, iteratee ) Class lodash
+    Return bSortIndBy( array, value, getIteratee( iteratee, 2 ), .T. )
+
+Static Function eq(value, compare)
+    Return value == compare
+
+Method tail( array ) Class lodash
+    Local length := If array == Nil ? 0 : Len( array )
+    Return If length > 0 ? bSlice( array, 1, length ) : {}
