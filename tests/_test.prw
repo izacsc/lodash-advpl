@@ -8,6 +8,7 @@ TestSuite _test Description 'Lodash AdvPL implementation' Verbose
     Feature Chunk             Description 'Creates an array of elements split into groups the length of size.'// If array cant be split evenly, the final chunk will be the remaining elements.'
     Feature Compact           Description 'Creates an array with all falsey values removed ( .F., Nil, 0, "")'
     Feature Concat            Description 'Creates a new array concatenating array with arrays and/or values.'
+    Feature Difference        Description 'Creates an array of array values not included in the other given arrays using SameValueZero for equality comparisons. The order and references of result values are determined by the first array.'
     Feature Drop              Description 'Creates a slice of array with n elements dropped from the beginning.'
     Feature DropRight         Description 'Creates a slice of array with n elements dropped from the end.'
     Feature DropRightWhile    Description 'Creates a slice of array excluding elements from the end.'// Elements are dropped until predicate returns falsey. The predicate is invoked with three arguments: (value, index, array).'
@@ -57,6 +58,12 @@ Return
 Feature Concat TestSuite _test
 
     ::Expect( _:concat( { 1 }, 2, { 3 }, { { 4 } } ) ):ToBe( { 1, 2, 3, {4} } )
+
+Return
+
+Feature Difference TestSuite _test
+
+    ::Expect( _:difference({2, 1}, {2, 3}) ):ToBe( { 1 } )
 
 Return
 

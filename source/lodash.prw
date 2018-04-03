@@ -6,19 +6,21 @@
 #DEFINE CLONE_DEEP_FLAG 1
 #DEFINE MAX_SAFE_INTEGER 9007199254740991
 #DEFINE MAX_ARRAY_LENGTH 100000
-#DEFINE MAX_ARRAY_INDEX MAX_ARRAY_LENGTH 
+#DEFINE LARGE_ARRAY_SIZE 200
+#DEFINE MAX_ARRAY_INDEX MAX_ARRAY_LENGTH
 #DEFINE HALF_MAX_ARRAY_LENGTH NoRound(MAX_ARRAY_LENGTH / 2, 0 )
 
-//problems with 10 char size limit. 
+//problems with 10 char size limit.
 // Functions will be compiled as follows:
 // b -> b   example: bIndexOf   -> bIndexOf
-// strict -> s example: strictIndexOf -> sIndexOf 
+// strict -> s example: strictIndexOf -> sIndexOf
 // bSortedIndex -> bSortInd
+Static __self 
 
 User Function _( id )
     Local nActivation := 0
     Local cProcname   := ""
-    
+
     If id == Nil
         id := "_"
     EndIf
@@ -47,6 +49,7 @@ Class lodash From LongNameClass
     Method chunk( )
     Method compact( )
     Method concatenate( )
+    Method difference( )
     Method drop( )
     Method dropRight( )
     Method dropRightWhile( )
@@ -80,10 +83,18 @@ Class lodash From LongNameClass
     Method sortedLastIndexOf( )
     Method tail( )
 
+    Method isArray()
+    Method isArrayLike()
+    Method isArrayLikeObject()
+    Method isFunction()
+    Method isLength()
+    Method isObject()
+    Method isObjectLike()
+
 EndClass
 
 Method new( ) Class lodash
-
+    __self := self
     Return self
 
 Method className( ) Class lodash
@@ -138,6 +149,97 @@ Method compact( array ) Class lodash
 
     Return result
 
+Method difference( array, values ) Class lodash
+        //   ? bDifference( array, bFlatten( values, 1, { |value | __self:isArrayLikeObject(value) }, .T. ) );
+    Return If ::isArrayLikeObject( array );
+          ? bDifference( array, values );
+          : {}
+
+Method isArrayLikeObject( value ) Class lodash
+    // Return ::isObjectLike( value ) .And. ::isArrayLike( value ) Arrays in JS are Objects
+    Return ::isArrayLike( value )
+
+Method isObjectLike( value ) Class lodash
+    Return value != Nil .And. Valtype(value) == 'O'
+
+Method isArrayLike( value ) Class lodash
+    Return value != Nil .And. !::isFunction( value ) .And. ::isLength( Len( value ) ) 
+
+Method isLength( value ) Class lodash
+    Return ValType( value ) == 'N' .And.;
+            value > -1 .And. value % 1 == 0 .And. value <= MAX_SAFE_INTEGER
+
+Static Function bDifference( array, values, iteratee, comparator )
+    Local index := 0
+    Local includes := Function( array, value )->aIncludes( array, value )
+    Local isCommon := .T.
+    Local length := Len( array )
+    Local result := { }
+    Local valuesLength := Len( values )
+    Local value
+    Local computed
+    Local valuesIndex
+
+    If length == 0
+        Return result
+    EndIf
+
+    If iteratee != Nil
+        values := arrayMap( values, bUnary( iteratee ) )
+    EndIf
+
+    If comparator != Nil
+        includes := Function( array, value, comparator )->aIncludesWith( array, value, comparator )
+        isCommon := .F.
+    elseIf .F. //Len( values ) >= LARGE_ARRAY_SIZE cache commented out
+        includes := Function( cache, key )->cacheHas( cache, key )
+        isCommon := .F.
+        values := SetCache():New( values )
+    EndIf
+
+    While index++ < length
+        Begin Sequence
+            value := array[ index ]
+            computed := If iteratee == Nil ? value : Eval iteratee( value )
+
+            value := If ( comparator .Or. value != 0 ) ? value : 0
+
+            If isCommon .And. computed == computed
+                valuesIndex := valuesLength
+                While valuesIndex > 0
+                    If values[ valuesIndex ] == computed
+                        Break
+                    EndIf
+                    valuesIndex --
+                EndDo
+                AAdd( result, value )
+            ElseIf ! Eval includes( values, computed, comparator )
+                AAdd( result, value )
+            EndIf
+        End Sequence
+    EndDo
+
+    Return result
+
+Static Function aIncludes( array, value )
+      Local length := If array == Nil ? 0 : Len( array )
+      Return length > 0 .And. bIndexOf( array, value, 0 ) > -1
+
+Static Function aIncludesWith( array, value, comparator )
+    Local index := 0
+    Local length := If array == Nil ? 0 : Len( array )
+
+    While index ++ < length
+        If Eval comparator( value, array[ index ] )
+            Return .T.
+        EndIf
+    EndDo
+
+    Return .F.
+
+Method isFunction( value ) Class lodash
+    Return ValType( value ) == 'B'
+
 Method concatenate( array, params ) Class lodash
     Local result  := AClone( array )
     Local flatten := ::flatten( params )
@@ -168,24 +270,28 @@ Method flattenDeep( array ) Class lodash
 
     Return bFlatten( array, 9999 )
 
-Static Function bFlatten( array, depth, result )
+Static Function bFlatten( array, depth, predicate, isStrict, result )
     Local index  := 0
     Local length := Len( array )
     Local value
 
-    If Empty( result )
+    If predicate == Nil 
+        predicate := Function( par )-> ValType( par ) == "A"
+    EndIf
+    
+    If result == Nil 
         result := { }
     EndIf
 
     While index ++ < length
         value := array[ index ]
-        If ( depth > 0 .And. ValType( value ) == "A" )
+        If ( depth > 0 .And. Eval predicate(value) )
             If ( depth > 1 )
-                bFlatten( value, depth - 1, result )
+                bFlatten( value, depth - 1, predicate, isStrict, result )
             Else
                 arrayPush( result, value )
             EndIf
-        Else
+        ElseIf !isStrict
             AAdd( result, value )
         EndIf
     EndDo
@@ -228,7 +334,7 @@ Static Function toInteger( value )
     Return If remainder > 0 ? result - remainder : result
 
 Static Function  toFinite( value )
-    Local sign 
+    Local sign
 
     If value == Nil
         Return 0
@@ -237,7 +343,7 @@ Static Function  toFinite( value )
     value := toNumber( value )
 
     If value == INFINITY .Or. value == -INFINITY
-        sign := If value < 0 ? -1 : 1 
+        sign := If value < 0 ? -1 : 1
         Return sign * MAX_INTEGER
     EndIf
 
@@ -399,11 +505,11 @@ Function bIteratee( value )
         Return Function( value )->identity( value )
     EndIf
 
-    If ValType( value ) == 'O' 
+    If ValType( value ) == 'O'
     Return If isArray( value );
         ? bMatchesProperty( value[ 0 ], value[ 1 ] );
         : bMatches( value )
-    
+
     EndIf
 
     Return property( value )
@@ -646,11 +752,11 @@ Static Function arrayMap( array, iteratee )
     While index++ < length
         result[ index ] := Eval iteratee( array[ index ], index, array )
     EndDo
-    
+
     Return result
 
 Static Function bUnary( block )
-      
+
     Return Function( value ) -> Eval block( value )
 
 Method pullAt ( array, indexes ) Class lodash
@@ -692,7 +798,7 @@ Static Function bAt( object, paths )
     While index++ < length
         result[ index ] := If skip ? Nil : getValue( object, paths[ index ] )
     EndDo
-    
+
     Return result
 
 //TODO
@@ -713,7 +819,7 @@ Static Function bGet( object, path )
     path := castPath( path, object )
 
     While object != Nil .And. index < length
-        index ++ 
+        index ++
         result := object[ toKey( path[ index ] ) ]
     EndDo
 
@@ -728,9 +834,9 @@ Static Function toKey( value )
     // Return If ( result == '0' .And. ( 1 / value ) == -INFINITY ) ? '-0' : result
 
 Static Function castPath( value, object )
-    
-    Return {value}
-    
+
+    Return { value }
+
     // If isArray( value )
     //     Return value
     // EndIf
@@ -769,7 +875,7 @@ Method reverse( array ) Class lodash
     Local reversed := {}
     Local length := If array == Nil ? 0 : Len( array )
     Local index := length + 1
-    
+
     If array != Nil
         While index -- > 1
             AAdd(reversed, array[ index ] )
@@ -782,7 +888,7 @@ Method reverse( array ) Class lodash
 
 Method slice( array, start, finish ) Class lodash
     Local length := If array == Nil ? 0 : Len( array )
-    
+
     If length == Nil
         Return { }
     EndIf
@@ -792,7 +898,7 @@ Method slice( array, start, finish ) Class lodash
         finish := length
     Else
         start := If start == Nil ? 1 : toInteger( start )
-        finish := If finish == Nil ? length : toInteger( finish ) - 1 
+        finish := If finish == Nil ? length : toInteger( finish ) - 1
     EndIf
 
     Return bSlice( array, start - 1 , finish )
@@ -814,13 +920,13 @@ Static Function bSortInd( array, value, retHighest )
             mid := NoRound( ( low + high ) / 2 , 0)
             computed := array[ mid ]
 
-            If computed != Nil .And. !isSymbol( computed ) .And. ; 
-               If  retHighest ?  computed <= value  : computed < value  
+            If computed != Nil .And. !isSymbol( computed ) .And. ;
+               If  retHighest ?  computed <= value  : computed < value
                 low := mid + 1
             else
                 high := mid
             EndIf
-        EndDo 
+        EndDo
 
         Return high
     EndIf
@@ -895,7 +1001,7 @@ Method sortedLastIndexOf( array, value ) Class lodash
     Local index
 
     If length > 0
-        index := bSortInd( array, value, .T. ) - 1 // ?
+        index := bSortInd( array, value, .T. ) - 1
         If eq( array[ index ], value )
             Return index
         EndIf
