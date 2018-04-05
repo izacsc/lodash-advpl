@@ -2,6 +2,8 @@
 #include 'lodash.ch'
 #include 'testsuite.ch'
 
+#xtranslate Expect <prm,...> to be <expr,...> => ::Expect(<prm>):ToBe(<expr>)
+
 import lodash
 
 TestSuite _test Description 'Lodash AdvPL implementation' Verbose
@@ -14,8 +16,8 @@ TestSuite _test Description 'Lodash AdvPL implementation' Verbose
     Feature DropRightWhile    Description 'Creates a slice of array excluding elements from the end.'// Elements are dropped until predicate returns falsey. The predicate is invoked with three arguments: (value, index, array).'
     Feature DropWhile         Description 'Creates a slice of array excluding elements from the beginning.'// Elements are dropped until predicate returns falsey. The predicate is invoked with three arguments: (value, index, array).'
     Feature Fill              Description 'Fills elements of array with value from start, but not including, end.'
-    Feature FindIndex         Description 'Returns the index of the first element predicate returns truthy.'         
-    Feature FindLastIndex     Description 'Like _.findIndex except that it iterates from right to left.'         
+    Feature FindIndex         Description 'Returns the index of the first element predicate returns truthy.'
+    Feature FindLastIndex     Description 'Like _.findIndex except that it iterates from right to left.'
     Feature Flatten           Description 'Flattens array a single level deep.'
     Feature FlattenDeep       Description 'Recursively flattens array.'
     Feature FlattenDepth      Description 'Recursively flatten array up to depth times.'
@@ -44,263 +46,262 @@ EndTestSuite
 
 Feature Chunk TestSuite _test
 
-    ::Expect( _:chunk({'a', 'b', 'c', 'd'}, 2) ):ToBe( {{'a', 'b'}, {'c', 'd'}} )
-    ::Expect( _:chunk({'a', 'b', 'c', 'd'}, 3) ):ToBe( {{'a', 'b', 'c'}, {'d'}} )
+    Expect _:chunk( {'a', 'b', 'c', 'd'}, 2) to be { {'a', 'b'}, {'c', 'd'} }
+    Expect _:chunk( {'a', 'b', 'c', 'd'}, 3) to be { {'a', 'b', 'c'}, {'d'} }
 
 Return
 
 Feature Compact TestSuite _test
 
-    ::Expect( _:compact( { 0, 1, .F., 2, "", 3, Nil } ) ):ToBe( { 1, 2, 3 } ) 
+    Expect _:compact( { 0, 1, .F., 2, "", 3, Nil } ) to be { 1, 2, 3 }
 
 Return
 
 Feature Concat TestSuite _test
 
-    ::Expect( _:concat( { 1 }, 2, { 3 }, { { 4 } } ) ):ToBe( { 1, 2, 3, {4} } )
+    Expect _:concat( { 1 }, 2, { 3 }, { { 4 } } ) to be { 1, 2, 3, {4} }
 
 Return
 
 Feature Difference TestSuite _test
 
-    ::Expect( _:difference({2, 1}, {2, 3}) ):ToBe( { 1 } )
+    Expect _:difference({2, 1}, {2, 3}) to be { 1 }
 
 Return
 
-
 Feature Drop TestSuite _test
 
-    ::Expect( _:drop( { 1, 2, 3 }    ) ):ToBe( { 2, 3 } )
-    ::Expect( _:drop( { 1, 2, 3 }, 2 ) ):ToBe( { 3 } )
-    ::Expect( _:drop( { 1, 2, 3 }, 5 ) ):ToBe( { } )
-    ::Expect( _:drop( { 1, 2, 3 }, 0 ) ):ToBe( { 1, 2, 3 } )
+    Expect _:drop( { 1, 2, 3 }    ) to be { 2, 3 }
+    Expect _:drop( { 1, 2, 3 }, 2 ) to be { 3 }
+    Expect _:drop( { 1, 2, 3 }, 5 ) to be { }
+    Expect _:drop( { 1, 2, 3 }, 0 ) to be { 1, 2, 3 }
 
 Return
 
 Feature DropRight TestSuite _test
 
-    ::Expect( _:dropRight( { 1, 2, 3 }    ) ):ToBe( { 1, 2 } )
-    ::Expect( _:dropRight( { 1, 2, 3 }, 2 ) ):ToBe( { 1 } )
-    ::Expect( _:dropRight( { 1, 2, 3 }, 5 ) ):ToBe( { } )
-    ::Expect( _:dropRight( { 1, 2, 3 }, 0 ) ):ToBe( { 1, 2, 3 } )
+    Expect _:dropRight( { 1, 2, 3 }    ) to be { 1, 2 }
+    Expect _:dropRight( { 1, 2, 3 }, 2 ) to be { 1 }
+    Expect _:dropRight( { 1, 2, 3 }, 5 ) to be { }
+    Expect _:dropRight( { 1, 2, 3 }, 0 ) to be { 1, 2, 3 }
 
 Return
 
 Feature DropRightWhile TestSuite _test
 
-    ::Expect( _:dropRightWhile( { 1, 2, 3 }, {|| .F. } ) ):ToBe( { 1, 2, 3 }  )
-    ::Expect( _:dropRightWhile( { 1, 2, 3 }, {|| .T. } ) ):ToBe( { }  )
-    ::Expect( _:dropRightWhile( { 1, 2, 3 }, {|value| value > 1 } ) ):ToBe( { 1 }  )
+    Expect _:dropRightWhile( { 1, 2, 3 }, {|| .F. } ) to be { 1, 2, 3 }
+    Expect _:dropRightWhile( { 1, 2, 3 }, {|| .T. } ) to be { }
+    Expect _:dropRightWhile( { 1, 2, 3 }, {|value| value > 1 } ) to be { 1 }
 
 Return
 
 Feature DropWhile TestSuite _test
 
-    ::Expect( _:dropWhile( { 1, 2, 3 }, {|| .F. } ) ):ToBe( { 1, 2, 3 }  )
-    ::Expect( _:dropWhile( { 1, 2, 3 }, {|| .T. } ) ):ToBe( { }  )
-    ::Expect( _:dropWhile( { 1, 2, 3 }, {|value| value < 3 } ) ):ToBe( { 3 }  )
+    Expect _:dropWhile( { 1, 2, 3 }, {|| .F. } ) to be { 1, 2, 3 }
+    Expect _:dropWhile( { 1, 2, 3 }, {|| .T. } ) to be { }
+    Expect _:dropWhile( { 1, 2, 3 }, {|value| value < 3 } ) to be { 3 }
 
 Return
 
 Feature Fill TestSuite _test
- 
-    ::Expect(_:fill( { 1, 2, 3 }, 'a')):ToBe( {'a', 'a', 'a'} )
-    ::Expect(_:fill( Array( 3 ), 2 )):ToBe( {2, 2, 2} )
-    ::Expect(_:fill( { 4, 6, 8, 10 }, '*', 2, 4)):ToBe( {4, '*', '*', 10} )
- 
-Return 
+
+    Expect _:fill( { 1, 2, 3 }, 'a') to be {'a', 'a', 'a'}
+    Expect _:fill( Array( 3 ), 2 ) to be {2, 2, 2}
+    Expect _:fill( { 4, 6, 8, 10 }, '*', 2, 4) to be {4, '*', '*', 10}
+
+Return
 
 
 Feature FindIndex TestSuite _test
- 
-    ::Expect(_:findIndex( { 1, 2, 3 }, {|| .F. } )):ToBe( -1 )
-    ::Expect(_:findIndex( { 1, 2, 3 }, {|value| value == 2 } )):ToBe( 2 )
-    ::Expect(_:findIndex( { 1, 2, 3 }, {|value, index| index == 3 } )):ToBe( 3 )
-    ::Expect(_:findIndex( { 1, 2, 3 }, {|value, index| index == 1 }, 2 )):ToBe( -1 )
- 
-Return 
+
+    Expect _:findIndex( { 1, 2, 3 }, {|| .F. } ) to be -1
+    Expect _:findIndex( { 1, 2, 3 }, {|value| value == 2 } ) to be 2
+    Expect _:findIndex( { 1, 2, 3 }, {|value, index| index == 3 } ) to be 3
+    Expect _:findIndex( { 1, 2, 3 }, {|value, index| index == 1 }, 2 ) to be -1
+
+Return
 
 Feature FindLastIndex TestSuite _test
- 
-    ::Expect(_:findLastIndex( { 1, 2, 3 }, {|| .F. } )):ToBe( -1 )
-    ::Expect(_:findLastIndex( { 1, 2, 3 }, {|value| value == 2 } )):ToBe( 2 )
-    ::Expect(_:findLastIndex( { 1, 2, 3 }, {|value, index| index == 3 } )):ToBe( 3 )
-    ::Expect(_:findLastIndex( { 1, 2, 3 }, {|value, index| index == 3 }, 2 )):ToBe( -1 )
- 
-Return 
+
+    Expect _:findLastIndex( { 1, 2, 3 }, {|| .F. } ) to be -1
+    Expect _:findLastIndex( { 1, 2, 3 }, {|value| value == 2 } ) to be 2
+    Expect _:findLastIndex( { 1, 2, 3 }, {|value, index| index == 3 } ) to be 3
+    Expect _:findLastIndex( { 1, 2, 3 }, {|value, index| index == 3 }, 2 ) to be -1
+
+Return
 
 Feature Flatten TestSuite _test
 
-    ::Expect( _:flatten( { 1, { 2, { 3, { 4 } }, 5 } } ) ):ToBe( { 1, 2, { 3, { 4 } }, 5 } )
+    Expect _:flatten( { 1, { 2, { 3, { 4 } }, 5 } } ) to be { 1, 2, { 3, { 4 } }, 5 }
 
 Return
 
 Feature FlattenDeep TestSuite _test
 
-    ::Expect( _:flattenDeep( { 1, { 2, { 3, { 4 } }, 5 } } ) ):ToBe( { 1, 2, 3, 4, 5 } )
+    Expect _:flattenDeep( { 1, { 2, { 3, { 4 } }, 5 } } ) to be { 1, 2, 3, 4, 5 }
 
 Return
 
 Feature FlattenDepth TestSuite _test
 
-    ::Expect( _:flattenDepth( {1, {2, {3, {4}}, 5}}, 1 ) ):ToBe( {1, 2, {3, {4}}, 5} )
-    ::Expect( _:flattenDepth( {1, {2, {3, {4}}, 5}}, 2 ) ):ToBe( {1, 2, 3, {4}, 5} )
-    
+    Expect _:flattenDepth( {1, {2, {3, {4}}, 5}}, 1 ) to be {1, 2, {3, {4}}, 5}
+    Expect _:flattenDepth( {1, {2, {3, {4}}, 5}}, 2 ) to be {1, 2, 3, {4}, 5}
+
 Return
 
 Feature FromPairs TestSuite _test
 
-    ::Expect( FwJsonSerialize(_:fromPairs( { {'a', 1} , {'b', 2} } )) ):ToBe('{"a":1,"b":2}' )
-    
+    Expect FwJsonSerialize(_:fromPairs( { {'a', 1} , {'b', 2} } )) To be'{"a":1,"b":2}'
+
 Return
 
 Feature Head TestSuite _test
 
-    ::Expect( _:head( { 1, 2, 3 }) ):ToBe( 1 )
-    ::Expect( _:head( { } ) ):ToBe( Nil )
-    
+    Expect _:head( { 1, 2, 3 }) to be 1
+    Expect _:head( { } ) to be Nil
+
 Return
 
 Feature IndexOf TestSuite _test
 
-    ::Expect(_:indexOf( { 1, 2, 1, 2 }, 2 )):ToBe( 2 )
-    ::Expect(_:indexOf( { 1, 2, 1, 2 }, 2, 3 )):ToBe( 4 )
-    
+    Expect _:indexOf( { 1, 2, 1, 2 }, 2 ) to be 2
+    Expect _:indexOf( { 1, 2, 1, 2 }, 2, 3 ) to be 4
+
 Return
 
 Feature Initial TestSuite _test
 
-    ::Expect(_:initial( { 1, 2, 3 } )):ToBe( { 1, 2 } )
-    
+    Expect _:initial( { 1, 2, 3 } ) to be { 1, 2 }
+
 Return
 
 Feature Last TestSuite _test
 
-    ::Expect(_:last( { 1, 2, 3 } )):ToBe( 3 )
-    
+    Expect _:last( { 1, 2, 3 } ) to be 3
+
 Return
 
 Feature LastIndexOf TestSuite _test
 
-    ::Expect(_:lastIndexOf( { 1, 2, 1, 2 }, 2 )):ToBe( 4 )
-    ::Expect(_:lastIndexOf( { 1, 2, 1, 2 }, 2, 2 )):ToBe( 2 )
-    
+    Expect _:lastIndexOf( { 1, 2, 1, 2 }, 2 ) to be 4
+    Expect _:lastIndexOf( { 1, 2, 1, 2 }, 2, 2 ) to be 2
+
 Return
 
 Feature nth TestSuite _test
 
-    ::Expect(_:nth( { 'a', 'b' ,'c', 'd'}, 2 )):ToBe('b' )
-    ::Expect(_:nth( { 'a', 'b' ,'c', 'd'}, -2 )):ToBe( 'c' )
-    
+    Expect _:nth( { 'a', 'b' ,'c', 'd'}, 2 ) To be'b'
+    Expect _:nth( { 'a', 'b' ,'c', 'd'}, -2 ) to be 'c'
+
 Return
 
 Feature pull TestSuite _test
     Local array := { 'a', 'b' ,'c', 'd', 'a', 'b' ,'c'}
 
-    ::Expect(_:pull( array , 'a', 'b' )):ToBe( { 'c', 'd', 'c'} )
-    ::Expect(array):ToBe( { 'c', 'd', 'c'} )
-    
+    Expect _:pull( array , 'a', 'b' ) to be { 'c', 'd', 'c'}
+    Expect array to be { 'c', 'd', 'c'}
+
 Return
 
 Feature pullAll TestSuite _test
     Local array := { 'a', 'b' ,'c', 'd', 'a', 'b' ,'c'}
 
-    ::Expect(_:pullAll( array , {'a', 'b'} )):ToBe( { 'c', 'd', 'c'} )
-    ::Expect(array):ToBe( { 'c', 'd', 'c'} )
-    
+    Expect _:pullAll( array , {'a', 'b'} ) to be { 'c', 'd', 'c'}
+    Expect array to be { 'c', 'd', 'c'}
+
 Return
 
 Feature pullAllBy TestSuite _test
 
-    // ::Expect(_:pullAllBy( { 'a', 'b' ,'c', 'd', 'a', 'b' ,'c'} , {'a', 'b'}, { | value | value } )):ToBe( { 'c', 'd', 'c'} )
-    ::Expect(_:pullAllBy( { 'a', 'b' ,'c', 'd', 'a', 'b' ,'c'} , {'a', 'b'}, { | value | Asc(value) } )):ToBe( { 'c', 'd', 'c'} )
-    // ::Expect(_:pullAllBy( { 'a', 'b' ,'c', 'd', 'a', 'b' ,'c'} , {'a', 'b'}, { |value| If( value < 'd', value, '') } )):ToBe( { 'c', 'c'})
-    
+    // Expect _:pullAllBy( { 'a', 'b' ,'c', 'd', 'a', 'b' ,'c'} , {'a', 'b'}, { | value | value } ) to be { 'c', 'd', 'c'}
+    Expect _:pullAllBy( { 'a', 'b' ,'c', 'd', 'a', 'b' ,'c'} , {'a', 'b'}, { | value | Asc(value) } ) to be { 'c', 'd', 'c'}
+    // Expect _:pullAllBy( { 'a', 'b' ,'c', 'd', 'a', 'b' ,'c'} , {'a', 'b'}, { |value| If( value < 'd', value, '') } ) to be { 'c', 'c'}
+
 Return
 
 Feature pullAllWith TestSuite _test
 
-    ::Expect(_:pullAllWith( { 'a', 'b' ,'c', 'd', 'a', 'b' ,'c'} , {'a', 'b'}, { | | .F. } )):ToBe( { 'a', 'b' ,'c', 'd', 'a', 'b' ,'c' } )
-    ::Expect(_:pullAllWith( { 'a', 'b' ,'c', 'd', 'a', 'b' ,'c'} , {'a', 'b'}, { | | .T. } )):ToBe( { } )
-    ::Expect(_:pullAllWith( { 'a', 'b' ,'c', 'd', 'a', 'b' ,'c'} , {'a'}, { |value, comp| value != comp } )):ToBe( { 'a', 'a'}  )
-    
+    Expect _:pullAllWith( { 'a', 'b' ,'c', 'd', 'a', 'b' ,'c'} , {'a', 'b'}, { | | .F. } ) to be { 'a', 'b' ,'c', 'd', 'a', 'b' ,'c' }
+    Expect _:pullAllWith( { 'a', 'b' ,'c', 'd', 'a', 'b' ,'c'} , {'a', 'b'}, { | | .T. } ) to be { }
+    Expect _:pullAllWith( { 'a', 'b' ,'c', 'd', 'a', 'b' ,'c'} , {'a'}, { |value, comp| value != comp } ) to be { 'a', 'a'}
+
 Return
 
 Feature pullAt TestSuite _test
     Local array := { 'a', 'b' ,'c', 'd'}
-    
-    ::Expect( _:pullAt( array, {1, 3} ) ):ToBe( {'a', 'c'} )
-    ::Expect( array):ToBe( {'b', 'd'} )
-    
+
+    Expect _:pullAt( array, {1, 3} ) to be {'a', 'c'}
+    Expect array to be {'b', 'd'}
+
 Return
 
 Feature Remove TestSuite _test
     Local array := { 1, 2, 3, 4}
     Local evens := { }
-    
+
     evens := _:remove( array, { |n| n%2==0 })
 
-    ::Expect(array):Tobe({ 1, 3 })
-    ::Expect(evens):Tobe({ 2, 4 })
+    Expect array to be { 1, 3 }
+    Expect evens to be { 2, 4 }
 
 Return
 
 Feature Reverse TestSuite _test
     Local array := { 1, 2, 3}
 
-    ::Expect(_:reverse( array)):Tobe({ 3, 2, 1 })
-    ::Expect(array):Tobe({ 3, 2, 1 })
+    Expect _:reverse( array) To be { 3, 2, 1 }
+    Expect array to be { 3, 2, 1 }
 
 Return
 
 Feature Slice TestSuite _test
     Local array := { 1, 2, 3}
 
-    ::Expect( _:slice( array, 2) ):Tobe( { 2, 3 })
-    ::Expect( _:slice( array, 1, 2) ):Tobe( { 1 })
-    ::Expect( _:slice( array, 1, 4) ):Tobe( { 1, 2, 3 })
+    Expect _:slice( array, 2) to be { 2, 3 }
+    Expect _:slice( array, 1, 2) to be { 1 }
+    Expect _:slice( array, 1, 4) to be { 1, 2, 3 }
 
 Return
 
 Feature SortedIndex TestSuite _test
     Local array := { 30, 50 }
 
-    ::Expect( _:sortedIndex( array, 40) ):Tobe( 2 )
+    Expect _:sortedIndex( array, 40) to be 2
 
 Return
 
 Feature SortedIndexBy TestSuite _test
     Local array := { {50, 30}, {40, 50} }
 
-    ::Expect( _:sortedIndexBy( array, {30, 40}, { |value| value[2] }) ):Tobe( 2 )
+    Expect _:sortedIndexBy( array, {30, 40}, { |value| value[2] }) to be 2
 
 Return
 
 Feature SortedIndexOf TestSuite _test
     Local array := { 4, 5, 5, 5, 6 }
 
-    ::Expect( _:sortedIndexOf( array, 5) ):Tobe( 2 )
+    Expect _:sortedIndexOf( array, 5) to be 2
 
 Return
 
 Feature SortedLastIndex TestSuite _test
     Local array := { 4, 5, 5, 5, 6 }
 
-    ::Expect( _:sortedLastIndex( array, 5) ):Tobe( 5 )
+    Expect _:sortedLastIndex( array, 5) to be 5
 
 Return
 
 Feature SortedLastIndexBy TestSuite _test
     Local array := { {50, 30}, {40, 50}, {40, 50}, {40, 60} }
 
-    ::Expect( _:sortedLastIndexBy( array, {40, 50}, { |value| value[2] }) ):Tobe( 4 )
+    Expect _:sortedLastIndexBy( array, {40, 50}, { |value| value[2] }) to be 4
 
 Return
 
 Feature SortedLastIndexOf TestSuite _test
     Local array := { 4, 5, 5, 5, 6 }
 
-    ::Expect( _:sortedLastIndexOf( array, 5) ):Tobe( 4 )
+    Expect _:sortedLastIndexOf( array, 5) to be 4
 
 Return
 

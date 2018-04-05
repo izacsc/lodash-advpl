@@ -15,6 +15,8 @@
 // b -> b   example: bIndexOf   -> bIndexOf
 // strict -> s example: strictIndexOf -> sIndexOf
 // bSortedIndex -> bSortInd
+// arrayIncludes -> aIncludes
+
 Static __self 
 
 User Function _( id )
@@ -151,6 +153,7 @@ Method compact( array ) Class lodash
 
 Method difference( array, values ) Class lodash
         //   ? bDifference( array, bFlatten( values, 1, { |value | __self:isArrayLikeObject(value) }, .T. ) );
+        // Arrays in JS are Objects
     Return If ::isArrayLikeObject( array );
           ? bDifference( array, values );
           : {}

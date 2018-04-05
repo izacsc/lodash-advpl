@@ -5,7 +5,7 @@
 - [x] _.chunk  
 - [x] _.compact  
 - [x] _.concat  
-- [ ] _.difference  
+- [x] _.difference  
 - [ ] _.differenceBy  
 - [ ] _.differenceWith  
 - [x] _.drop  
@@ -102,7 +102,9 @@
 ## Date
 
 - [ ] _.now  
-- [ ] Function  
+
+## Function  
+
 - [ ] _.after  
 - [ ] _.ary  
 - [ ] _.before  
